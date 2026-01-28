@@ -4,5 +4,16 @@
     "framework": "static",
     "env": {
         "API_BASE_URL": "https://cooksy-finaly.up.railway.app"
-    }
+    },
+    "headers": [
+        {
+            "source": "/assets/(.*)",
+            "headers": [
+                {
+                    "key": "Cache-Control",
+                    "value": "public, max-age=31536000, immutable"
+                }
+            ]
+        }
+    ]
 }
