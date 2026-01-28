@@ -878,8 +878,10 @@
   function apiReady() {
     // Desktop app via PyWebView
     if (window.pywebview && window.pywebview.api) return true;
-    // Web/Vercel via REST API
-    if (window.CooksyAPI) return true;
+    // Web/Vercel via REST API - check if we can reach Railway
+    if (window.CooksyAPI && window.CooksyAPI.baseURL) return true;
+    // As fallback, if on web (not in PyWebView), assume REST API is available
+    if (!window.pywebview) return true;
     return false;
   }
 
@@ -904,29 +906,26 @@
     }
 
     // Fallback to REST API (web/Vercel)
-    if (window.CooksyAPI) {
-      const endpoint = `/api/${name}`;
-      const response = await fetch(`${window.CooksyAPI.baseURL}${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(merged),
-      });
-      if (!response.ok) {
-        throw new Error(`API error ${response.status}: ${response.statusText}`);
-      }
-      const res = await response.json();
-      if (res && res.error && /sessione/i.test(String(res.error))) {
-        clearAuthState();
-        updateAuthUi();
-        log('Sessione scaduta, effettua di nuovo il login.');
-        showToast('Sessione scaduta, effettua di nuovo il login.', 'error');
-      }
-      return res;
+    const apiBase = (window.CooksyAPI && window.CooksyAPI.baseURL) || 'https://cooksy-finaly.up.railway.app';
+    const endpoint = `/api/${name}`;
+    const response = await fetch(`${apiBase}${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(merged),
+    });
+    if (!response.ok) {
+      throw new Error(`API error ${response.status}: ${response.statusText}`);
     }
-
-    throw new Error('Nessun backend API disponibile');
+    const res = await response.json();
+    if (res && res.error && /sessione/i.test(String(res.error))) {
+      clearAuthState();
+      updateAuthUi();
+      log('Sessione scaduta, effettua di nuovo il login.');
+      showToast('Sessione scaduta, effettua di nuovo il login.', 'error');
+    }
+    return res;
   }
 
   function now() {
