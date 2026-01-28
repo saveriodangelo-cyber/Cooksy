@@ -1,5 +1,5 @@
 {
-    "buildCommand": "echo 'Static files'",
+    "buildCommand": "echo 'Building Cooksy PWA'",
     "outputDirectory": "ui",
     "framework": "static",
     "env": {
