@@ -2853,6 +2853,21 @@
           res = await api.list_templates();
           log(`Template caricati (list_templates): ${res ? (Array.isArray(res) ? res.length : res.templates?.length || 0) : 0}`);
           break;
+        } else if (!api) {
+          // Fallback to REST API for web/Vercel
+          try {
+            res = await api('get_templates');
+            log(`Template caricati (REST API): ${res ? (Array.isArray(res) ? res.length : res.templates?.length || 0) : 0}`);
+            break;
+          } catch (restErr) {
+            log(`Errore REST API template: ${restErr.message || restErr}`);
+            retries++;
+            if (retries < maxRetries) {
+              await new Promise(resolve => setTimeout(resolve, 500));
+            } else {
+              log('API template non pronta; uso template di default');
+            }
+          }
         } else {
           retries++;
           if (retries < maxRetries) {
