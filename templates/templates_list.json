@@ -1,0 +1,208 @@
+[
+  {
+    "id": "design_moderno",
+    "name": "Design Moderno",
+    "file": "design_moderno.html",
+    "description": "Layout moderno con palette pastello"
+  },
+  {
+    "id": "classico",
+    "name": "Classico",
+    "file": "classico.html",
+    "description": "Impostazione editoriale tradizionale"
+  },
+  {
+    "id": "minimal",
+    "name": "Minimal",
+    "file": "minimal.html",
+    "description": "Stile pulito e minimale"
+  },
+  {
+    "id": "fotografico",
+    "name": "Fotografico",
+    "file": "fotografico.html",
+    "description": "Focus immagine e impatto visivo"
+  },
+  {
+    "id": "atelier",
+    "name": "Atelier",
+    "file": "atelier.html",
+    "description": "Impostazione editoriale elegante",
+    "pro_only": true
+  },
+  {
+    "id": "bistro",
+    "name": "Bistro",
+    "file": "bistro.html",
+    "description": "Stile menu caldo e conviviale",
+    "pro_only": true
+  },
+  {
+    "id": "studio",
+    "name": "Studio",
+    "file": "studio.html",
+    "description": "Scheda tecnica pulita e ordinata",
+    "pro_only": true
+  },
+  {
+    "id": "giardino",
+    "name": "Giardino",
+    "file": "giardino.html",
+    "description": "Palette naturale e dettagli botanici",
+    "pro_only": true
+  },
+  {
+    "id": "materia",
+    "name": "Materia",
+    "file": "materia.html",
+    "description": "Texture artigianale e numeri grandi",
+    "pro_only": true
+  },
+  {
+    "id": "zen",
+    "name": "Zen",
+    "file": "zen.html",
+    "description": "Minimalismo con ampio respiro",
+    "pro_only": true
+  },
+  {
+    "id": "cantina",
+    "name": "Cantina",
+    "file": "cantina.html",
+    "description": "Stile rustico con tocchi moderni",
+    "pro_only": true
+  },
+  {
+    "id": "aurora",
+    "name": "Aurora",
+    "file": "aurora.html",
+    "description": "Gradienti luminosi e layout dinamico",
+    "pro_only": true
+  },
+  {
+    "id": "officina",
+    "name": "Officina",
+    "file": "officina.html",
+    "description": "Blueprint industriale e layout tecnico",
+    "pro_only": true
+  },
+  {
+    "id": "cascina",
+    "name": "Cascina",
+    "file": "cascina.html",
+    "description": "Caldo rustico con carta naturale",
+    "pro_only": true
+  },
+  {
+    "id": "galleria",
+    "name": "Galleria",
+    "file": "galleria.html",
+    "description": "Cornici editoriali e griglia asimmetrica",
+    "pro_only": true
+  },
+  {
+    "id": "riviera",
+    "name": "Riviera",
+    "file": "riviera.html",
+    "description": "Palette costiera e dettagli luminosi",
+    "pro_only": true
+  },
+  {
+    "id": "carta",
+    "name": "Carta",
+    "file": "carta.html",
+    "description": "Foglio a righe con note e tab",
+    "pro_only": true
+  },
+  {
+    "id": "notturno",
+    "name": "Notturno",
+    "file": "notturno.html",
+    "description": "Contrasto elegante con accenti oro",
+    "pro_only": true
+  },
+  {
+    "id": "archivio",
+    "name": "Archivio",
+    "file": "archivio.html",
+    "description": "Scheda archivio con sidebar e note",
+    "pro_only": true
+  },
+  {
+    "id": "serra",
+    "name": "Serra",
+    "file": "serra.html",
+    "description": "Palette botanica e pannelli freschi",
+    "pro_only": true
+  },
+  {
+    "id": "corallo",
+    "name": "Corallo",
+    "file": "corallo.html",
+    "description": "Toni caldi e pillole dinamiche",
+    "pro_only": true
+  },
+  {
+    "id": "velluto",
+    "name": "Velluto",
+    "file": "velluto.html",
+    "description": "Contrasto vellutato con barre colore",
+    "pro_only": true
+  },
+  {
+    "id": "tramonto",
+    "name": "Tramonto",
+    "file": "tramonto.html",
+    "description": "Gradienti caldi e atmosfera soft",
+    "pro_only": true
+  },
+  {
+    "id": "linea",
+    "name": "Linea",
+    "file": "linea.html",
+    "description": "Griglia tecnica e bordi lineari",
+    "pro_only": true
+  },
+  {
+    "id": "smeraldo",
+    "name": "Smeraldo",
+    "file": "smeraldo.html",
+    "description": "Palette verde e layout elegante",
+    "pro_only": true
+  },
+  {
+    "id": "sabbia",
+    "name": "Sabbia",
+    "file": "sabbia.html",
+    "description": "Toni caldi e carta naturale",
+    "pro_only": true
+  },
+  {
+    "id": "cosmo",
+    "name": "Cosmo",
+    "file": "cosmo.html",
+    "description": "Gradienti chiari e accenti moderni",
+    "pro_only": true
+  },
+  {
+    "id": "isola",
+    "name": "Isola",
+    "file": "isola.html",
+    "description": "Palette marina e layout fresco",
+    "pro_only": true
+  },
+  {
+    "id": "mercato",
+    "name": "Mercato",
+    "file": "mercato.html",
+    "description": "Titoli bold e accenti rustici",
+    "pro_only": true
+  },
+  {
+    "id": "radice",
+    "name": "Radice",
+    "file": "radice.html",
+    "description": "Toni terra e texture sobrie",
+    "pro_only": true
+  }
+]

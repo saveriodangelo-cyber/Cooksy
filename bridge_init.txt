@@ -1,0 +1,3 @@
+[BRIDGE] __init__ chiamato
+[BRIDGE] sys.frozen = False
+[BRIDGE] sys.executable = C:\Users\saver\AppData\Local\Programs\Python\Python311\python.exe

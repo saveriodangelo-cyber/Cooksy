@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="it">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ titolo }} - Giardino</title>
+  <style>
+    :root {
+      --bg: #f2f6f0;
+      --card: #ffffff;
+      --ink: #25332a;
+      --muted: #66716a;
+      --accent: #2f6f4f;
+      --accent-soft: #e2efe7;
+      --border: #d6e1da;
+      font-family: "Lora", "Georgia", serif;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      padding: 26px
+    }
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      position: relative
+    }
+
+    .halo {
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, rgba(47, 111, 79, 0.18), rgba(47, 111, 79, 0));
+      border-radius: 50%
+    }
+
+    header {
+      padding: 18px 20px;
+      border-radius: 18px;
+      background: linear-gradient(90deg, #f7fbf8, #e7f1ea);
+      border: 1px solid var(--border)
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2.4rem
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-top: 6px
+    }
+
+    .badges {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px
+    }
+
+    .badge {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 0.9rem
+    }
+
+    .badge strong {
+      color: var(--accent);
+      font-weight: 700;
+      margin-right: 6px
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 18px
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 16px;
+      border-radius: 16px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06)
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      color: var(--accent);
+      font-size: 1.1rem
+    }
+
+    h3 {
+      margin: 12px 0 6px;
+      font-size: 1rem;
+      color: var(--accent)
+    }
+
+    ul,
+    ol {
+      margin: 0;
+      padding-left: 18px
+    }
+
+    li {
+      margin-bottom: 6px
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.93rem
+    }
+
+    th,
+    td {
+      border: 1px solid var(--border);
+      padding: 8px;
+      vertical-align: top
+    }
+
+    th {
+      background: var(--accent-soft);
+      text-align: left
+    }
+
+    .muted {
+      color: var(--muted)
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 18px;
+      margin-top: 18px
+    }
+
+    @media(max-width:900px) {
+      body {
+        padding: 18px
+      }
+
+      .grid,
+      .row {
+        grid-template-columns: 1fr
+      }
+    }
+
+    /* --- Integrazione sezioni aggiunte (layout only) --- */
+    .base-fields {
+      margin-top: 16px;
+    }
+
+    .costi {
+      max-width: var(--maxw, 1080px);
+      margin: 18px auto;
+      padding: 16px;
+      background: var(--card, var(--paper, transparent));
+      border: 1px solid var(--border, var(--line, rgba(0, 0, 0, 0.10)));
+      border-radius: 16px;
+    }
+
+    .costi h2 {
+      margin: 0 0 10px;
+    }
+
+    .costi .note {
+      margin: 0 0 12px;
+    }
+
+    .costi table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layout">
+    <aside>
+      <div class="stamp">Ricettario</div>
+      <h1>{{ titolo }}</h1>
+      <p class="subtitle">{{ categoria or 'n/d' }}</p>
+      <div class="meta-list">
+        <div class="meta-item">
+          <span>Porzioni</span>
+          <strong>{{ porzioni or 'n/d' }}</strong>
+        </div>
+        <div class="meta-item">
+          <span>Tempo totale</span>
+          <strong>{{ tempo_totale or tempo or 'n/d' }}</strong>
+        </div>
+        <div class="meta-item">
+          <span>Difficoltà</span>
+          <strong>{{ difficolta or 'n/d' }}</strong>
+        </div>
+      </div>
+    </aside>
+
+    <main>
+      <div class="card">
+        <h2>Ingredienti</h2>
+        {% if ingredienti_componenti %}
+        {% for group in ingredienti_componenti %}
+        <h3>{{ group.name }}</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Ingrediente</th>
+              <th>Quantità</th>
+              <th>Unità</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in group["items"] %}
+            <tr>
+              <td>{{ item.nome or 'n/d' }}</td>
+              <td>{% if item.quantita and item.quantita > 0 %}{{ item.quantita }}{% else %}{{ item.quantita_raw or 'n/d'
+                }}{% endif %}</td>
+              <td>{{ item.unita or 'n/d' }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endfor %}
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <h2>Procedimento</h2>
+        {% set procedimento_text = procedimento.strip() %}
+        {% if procedimento_text %}
+        <ol>
+          {% for line in procedimento_text.split('\n') %}
+          {% if line.strip() %}<li>{{ line.strip() }}</li>{% endif %}
+          {% endfor %}
+        </ol>
+        {% endif %}
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <h2>Dati tecnici</h2>
+          <p class="muted"><strong>Metodo:</strong> {{ metodo_principale or 'n/d' }}</p>
+          <p class="muted"><strong>Prep:</strong> {{ tempo_preparazione or 'n/d' }}</p>
+          <p class="muted"><strong>Cottura:</strong> {{ tempo_cottura or 'n/d' }}</p>
+        </div>
+        <div class="card">
+          <h2>Allergeni</h2>
+          <p class="muted">{{ allergeni_text or 'n/d' }}</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Diete</h2>
+        <p class="muted">{{ diet_text or 'n/d' }}</p>
+      </div>
+
+      <div class="card">
+        <h2>Stagionalità</h2>
+        <p class="muted">{{ stagionalita or 'n/d' }}</p>
+      </div>
+
+      <div class="card">
+        <h2>Presentazione & Impiattamento</h2>
+        <p class="muted">{{ presentazione_impiattamento or 'n/d' }}</p>
+      </div>
+
+      <div class="card">
+        <h2>Abbinamento Vino</h2>
+        <p class="muted"><strong>Tipo:</strong> {{ vino_descrizione or 'n/d' }}</p>
+        <p class="muted"><strong>Regione:</strong> {{ vino_regione or 'n/d' }}</p>
+        <p class="muted"><strong>Annata:</strong> {{ vino_annata or 'n/d' }}</p>
+        <p class="muted"><strong>Temperatura servizio:</strong> {{ vino_temperatura_servizio or 'n/d' }}</p>
+      </div>
+
+      <div class="card">
+        <h2>Costi</h2>
+        {% if spesa_totale_ricetta or spesa_per_porzione %}
+        <p><strong>Spesa totale ricetta:</strong> €{{ spesa_totale_ricetta or 'n/d' }}</p>
+        <p><strong>Spesa per porzione:</strong> €{{ spesa_per_porzione or 'n/d' }}</p>
+        {% if cost_lines %}
+        <table>
+          <thead>
+            <tr>
+              <th>Ingrediente</th>
+              <th>Quantità</th>
+              <th>Prezzo/kg</th>
+              <th>Prezzo</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in cost_lines %}
+            <tr>
+              <td>{{ row.ingrediente or 'n/d' }}</td>
+              <td>{{ row.quantita_usata or 'n/d' }}</td>
+              <td>€{{ row.prezzo_kg_ud or 'n/d' }}</td>
+              <td>€{{ row.prezzo_calcolato or 'n/d' }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+        {% else %}
+        <p class="muted">Dati costi non disponibili</p>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <h2>Valori Nutrizionali (per 100g)</h2>
+        {% if nutrition_table and nutrition_table.get('100g') %}
+        <table>
+          <tbody>
+            <tr>
+              <td><strong>Energie:</strong></td>
+              <td>{{ nutrition_table['100g'].get('energia', 'n/d') }} kcal</td>
+            </tr>
+            <tr>
+              <td><strong>Proteine:</strong></td>
+              <td>{{ nutrition_table['100g'].get('proteine_totali', 'n/d') }} g</td>
+            </tr>
+            <tr>
+              <td><strong>Grassi:</strong></td>
+              <td>{{ nutrition_table['100g'].get('grassi_totali', 'n/d') }} g</td>
+            </tr>
+            <tr>
+              <td><strong>Carboidrati:</strong></td>
+              <td>{{ nutrition_table['100g'].get('carboidrati_totali', 'n/d') }} g</td>
+            </tr>
+            <tr>
+              <td><strong>Fibre:</strong></td>
+              <td>{{ nutrition_table['100g'].get('fibre', 'n/d') }} g</td>
+            </tr>
+            <tr>
+              <td><strong>Sodio:</strong></td>
+              <td>{{ nutrition_table['100g'].get('sodio', 'n/d') }} mg</td>
+            </tr>
+          </tbody>
+        </table>
+        {% else %}
+        <p class="muted">Dati nutrizionali non disponibili</p>
+        {% endif %}
+      </div>
+    </main>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="it">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ titolo }} - Atelier</title>
+  <style>
+    :root {
+      --paper: #f7f4ef;
+      --ink: #2a2520;
+      --muted: #6a625a;
+      --accent: #8a5a44;
+      --accent-soft: #efe4db;
+      --border: #d8d0c7;
+      font-family: "Playfair Display", "Georgia", serif;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      padding: 28px
+    }
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto
+    }
+
+    .hero {
+      display: flex;
+      gap: 24px;
+      align-items: flex-end;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 16px;
+      margin-bottom: 18px
+    }
+
+    .hero .label {
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted)
+    }
+
+    h1 {
+      margin: 6px 0 0;
+      font-size: 2.6rem
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 1rem
+    }
+
+    .hero-meta {
+      margin-left: auto;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      min-width: 260px
+    }
+
+    .chip {
+      background: var(--accent-soft);
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      font-size: 0.95rem
+    }
+
+    .chip strong {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent)
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 20px
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06)
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 1.2rem;
+      color: var(--accent)
+    }
+
+    h3 {
+      margin: 12px 0 6px;
+      font-size: 1rem;
+      color: var(--accent)
+    }
+
+    ul,
+    ol {
+      margin: 0;
+      padding-left: 18px
+    }
+
+    li {
+      margin-bottom: 6px
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem
+    }
+
+    th,
+    td {
+      border: 1px solid var(--border);
+      padding: 8px;
+      vertical-align: top
+    }
+
+    th {
+      background: var(--accent-soft);
+      text-align: left
+    }
+
+    .muted {
+      color: var(--muted)
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px
+    }
+
+    .photo {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-top: 10px
+    }
+
+    @media(max-width:900px) {
+      body {
+        padding: 18px
+      }
+
+      .hero {
+        flex-direction: column;
+        align-items: flex-start
+      }
+
+      .hero-meta {
+        width: 100%;
+        grid-template-columns: 1fr 1fr
+      }
+
+      .grid,
+      .two-col {
+        grid-template-columns: 1fr
+      }
+    }
+
+    /* --- Integrazione sezioni aggiunte (layout only) --- */
+    .base-fields {
+      margin-top: 16px;
+    }
+
+    .costi {
+      max-width: var(--maxw, 1080px);
+      margin: 18px auto;
+      padding: 16px;
+      background: var(--card, var(--paper, transparent));
+      border: 1px solid var(--border, var(--line, rgba(0, 0, 0, 0.10)));
+      border-radius: 16px;
+    }
+
+    .costi h2 {
+      margin: 0 0 10px;
+    }
+
+    .costi .note {
+      margin: 0 0 12px;
+    }
+
+    .costi table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layout">
+    <aside>
+      <div class="stamp">Ricettario</div>
+      <h1>{{ titolo }}</h1>
+      <p class="subtitle">{{ categoria or 'n/d' }}</p>
+      <div class="meta-list">
+        <div class="meta-item">
+          <span>Porzioni</span>
+          <strong>{{ porzioni or 'n/d' }}</strong>
+        </div>
+        <div class="meta-item">
+          <span>Tempo totale</span>
+          <strong>{{ tempo_totale or tempo or 'n/d' }}</strong>
+        </div>
+        <div class="meta-item">
+          <span>Difficoltà</span>
+          <strong>{{ difficolta or 'n/d' }}</strong>
+        </div>
+      </div>
+    </aside>
+
+    <main>
+      <div class="card">
+        <h2>Ingredienti</h2>
+        {% if ingredienti_componenti %}
+        {% for group in ingredienti_componenti %}
+        <h3>{{ group.name }}</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Ingrediente</th>
+              <th>Quantità</th>
+              <th>Unità</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in group["items"] %}
+            <tr>
+              <td>{{ item.nome or 'n/d' }}</td>
+              <td>{% if item.quantita and item.quantita > 0 %}{{ item.quantita }}{% else %}{{ item.quantita_raw or 'n/d'
+                }}{% endif %}</td>
+              <td>{{ item.unita or 'n/d' }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endfor %}
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <h2>Procedimento</h2>
+        {% set procedimento_text = procedimento.strip() %}
+        {% if procedimento_text %}
+        <ol>
+          {% for line in procedimento_text.split('\n') %}
+          {% if line.strip() %}<li>{{ line.strip() }}</li>{% endif %}
+          {% endfor %}
+        </ol>
+        {% endif %}
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <h2>Dati tecnici</h2>
+          <p class="muted"><strong>Metodo:</strong> {{ metodo_principale or 'n/d' }}</p>
+          <p class="muted"><strong>Prep:</strong> {{ tempo_preparazione or 'n/d' }}</p>
+          <p class="muted"><strong>Cottura:</strong> {{ tempo_cottura or 'n/d' }}</p>
+        </div>
+        <div class="card">
+          <h2>Allergeni</h2>
+          <p class="muted">{{ allergeni_text or 'n/d' }}</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Diete</h2>
+        <p class="muted">{{ diet_text or 'n/d' }}</p>
+      </div>
+
+      <div class="card">
+        <h2>Stagionalità</h2>
+        <p class="muted">{{ stagionalita or 'n/d' }}</p>
+      </div>
+
+      <div class="card">
+        <h2>Presentazione & Impiattamento</h2>
+        <p class="muted">{{ presentazione_impiattamento or 'n/d' }}</p>
+      </div>
+
+      <div class="card">
+        <h2>Abbinamento Vino</h2>
+        <p class="muted"><strong>Tipo:</strong> {{ vino_descrizione or 'n/d' }}</p>
+        <p class="muted"><strong>Regione:</strong> {{ vino_regione or 'n/d' }}</p>
+        <p class="muted"><strong>Annata:</strong> {{ vino_annata or 'n/d' }}</p>
+        <p class="muted"><strong>Temperatura servizio:</strong> {{ vino_temperatura_servizio or 'n/d' }}</p>
+      </div>
+
+      <div class="card">
+        <h2>Costi</h2>
+        {% if spesa_totale_ricetta or spesa_per_porzione %}
+        <p><strong>Spesa totale ricetta:</strong> €{{ spesa_totale_ricetta or 'n/d' }}</p>
+        <p><strong>Spesa per porzione:</strong> €{{ spesa_per_porzione or 'n/d' }}</p>
+        {% if cost_lines %}
+        <table>
+          <thead>
+            <tr>
+              <th>Ingrediente</th>
+              <th>Quantità</th>
+              <th>Prezzo/kg</th>
+              <th>Prezzo</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in cost_lines %}
+            <tr>
+              <td>{{ row.ingrediente or 'n/d' }}</td>
+              <td>{{ row.quantita_usata or 'n/d' }}</td>
+              <td>€{{ row.prezzo_kg_ud or 'n/d' }}</td>
+              <td>€{{ row.prezzo_calcolato or 'n/d' }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+        {% else %}
+        <p class="muted">Dati costi non disponibili</p>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <h2>Valori Nutrizionali (per 100g)</h2>
+        {% if nutrition_table and nutrition_table.get('100g') %}
+        <table>
+          <tbody>
+            <tr>
+              <td><strong>Energie:</strong></td>
+              <td>{{ nutrition_table['100g'].get('energia', 'n/d') }} kcal</td>
+            </tr>
+            <tr>
+              <td><strong>Proteine:</strong></td>
+              <td>{{ nutrition_table['100g'].get('proteine_totali', 'n/d') }} g</td>
+            </tr>
+            <tr>
+              <td><strong>Grassi:</strong></td>
+              <td>{{ nutrition_table['100g'].get('grassi_totali', 'n/d') }} g</td>
+            </tr>
+            <tr>
+              <td><strong>Carboidrati:</strong></td>
+              <td>{{ nutrition_table['100g'].get('carboidrati_totali', 'n/d') }} g</td>
+            </tr>
+            <tr>
+              <td><strong>Fibre:</strong></td>
+              <td>{{ nutrition_table['100g'].get('fibre', 'n/d') }} g</td>
+            </tr>
+            <tr>
+              <td><strong>Sodio:</strong></td>
+              <td>{{ nutrition_table['100g'].get('sodio', 'n/d') }} mg</td>
+            </tr>
+          </tbody>
+        </table>
+        {% else %}
+        <p class="muted">Dati nutrizionali non disponibili</p>
+        {% endif %}
+      </div>
+    </main>
+  </div>
+</body>
+
+</html>

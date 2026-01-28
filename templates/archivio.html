@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="it">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ titolo }} - Archivio</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@500;700&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;600&display=swap");
+
+    :root {
+      --bg: #f4f1ea;
+      --ink: #2e2a25;
+      --muted: #6f675f;
+      --accent: #9b6a3f;
+      --accent-2: #6c7a7e;
+      --paper: #ffffff;
+      --border: #d9d2c8;
+      font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      padding: 28px;
+      color: var(--ink);
+      background:
+        repeating-linear-gradient(0deg, rgba(155, 106, 63, 0.08) 0 1px, transparent 1px 32px),
+        var(--bg);
+    }
+
+    .layout {
+      max-width: 1150px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 20px;
+    }
+
+    aside {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 16px 32px rgba(46, 42, 37, 0.1);
+      position: sticky;
+      top: 24px;
+      height: fit-content;
+      animation: fadeIn 0.6s ease both;
+    }
+
+    .stamp {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    h1 {
+      margin: 10px 0 6px;
+      font-family: "Crimson Pro", serif;
+      font-size: 2.4rem;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-bottom: 12px
+    }
+
+    .meta-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .meta-item {
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #faf7f2;
+    }
+
+    .meta-item span {
+      display: block;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent-2);
+    }
+
+    main {
+      display: grid;
+      gap: 18px
+    }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 10px 22px rgba(46, 42, 37, 0.08);
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .card h2 {
+      margin: 0 0 10px;
+      font-family: "Crimson Pro", serif;
+      font-size: 1.25rem;
+      color: var(--accent);
+    }
+
+    .card h3 {
+      margin: 12px 0 6px;
+      font-size: 1rem;
+      color: var(--accent-2)
+    }
+
+    .muted {
+      color: var(--muted)
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem
+    }
+
+    th,
+    td {
+      border: 1px solid var(--border);
+      padding: 8px;
+      vertical-align: top
+    }
+
+    th {
+      background: #f6f1ea;
+      text-align: left
+    }
+
+    ul,
+    ol {
+      margin: 0;
+      padding-left: 18px
+    }
+
+    li {
+      margin-bottom: 6px
+    }
+
+    .photo {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-top: 12px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+
+      .card,
+      aside {
+        animation: none
+      }
+    }
+
+    @media (max-width:1000px) {
+      body {
+        padding: 18px
+      }
+
+      .layout {
+        grid-template-columns: 1fr
+      }
+
+      aside {
+        position: static
+      }
+
+      .two-col {
+        grid-template-columns: 1fr
+      }
+    }
+
+    /* --- Integrazione sezioni aggiunte (layout only) --- */
+    .base-fields {
+      margin-top: 16px;
+    }
+
+    .costi {
+      max-width: var(--maxw, 1080px);
+      margin: 18px auto;
+      padding: 16px;
+      background: var(--card, var(--paper, transparent));
+      border: 1px solid var(--border, var(--line, rgba(0, 0, 0, 0.10)));
+      border-radius: 16px;
+    }
+
+    .costi h2 {
+      margin: 0 0 10px;
+    }
+
+    .costi .note {
+      margin: 0 0 12px;
+    }
+
+    .costi table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layout">
+    <aside>
+      <div class="stamp">Ricettario</div>
+      <h1>{{ titolo }}</h1>
+      <p class="subtitle">{{ categoria or 'n/d' }}</p>
+      <div class="meta-list">
+        <div class="meta-item">
+          <span>Porzioni</span>
+          <strong>{{ porzioni or 'n/d' }}</strong>
+        </div>
+        <div class="meta-item">
+          <span>Tempo totale</span>
+          <strong>{{ tempo_totale or tempo or 'n/d' }}</strong>
+        </div>
+        <div class="meta-item">
+          <span>Difficoltà</span>
+          <strong>{{ difficolta or 'n/d' }}</strong>
+        </div>
+      </div>
+    </aside>
+
+    <main>
+      <div class="card">
+        <h2>Ingredienti</h2>
+        {% if ingredienti_componenti %}
+        {% for group in ingredienti_componenti %}
+        <h3>{{ group.name }}</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Ingrediente</th>
+              <th>Quantità</th>
+              <th>Unità</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in group["items"] %}
+            <tr>
+              <td>{{ item.nome or 'n/d' }}</td>
+              <td>{% if item.quantita and item.quantita > 0 %}{{ item.quantita }}{% else %}{{ item.quantita_raw or 'n/d'
+                }}{% endif %}</td>
+              <td>{{ item.unita or 'n/d' }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endfor %}
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <h2>Procedimento</h2>
+        {% set procedimento_text = procedimento.strip() %}
+        {% if procedimento_text %}
+        <ol>
+          {% for line in procedimento_text.split('\n') %}
+          {% if line.strip() %}<li>{{ line.strip() }}</li>{% endif %}
+          {% endfor %}
+        </ol>
+        {% endif %}
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <h2>Dati tecnici</h2>
+          <p class="muted"><strong>Metodo:</strong> {{ metodo_principale or 'n/d' }}</p>
+          <p class="muted"><strong>Prep:</strong> {{ tempo_preparazione or 'n/d' }}</p>
+          <p class="muted"><strong>Cottura:</strong> {{ tempo_cottura or 'n/d' }}</p>
+        </div>
+        <div class="card">
+          <h2>Allergeni</h2>
+          <p class="muted">{{ allergeni_text or 'n/d' }}</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Diete</h2>
+        <p class="muted">{{ diet_text or 'n/d' }}</p>
+      </div>
+
+      <div class="card">
+        <h2>Stagionalità</h2>
+        <p class="muted">{{ stagionalita or 'n/d' }}</p>
+      </div>
+
+      <div class="card">
+        <h2>Presentazione & Impiattamento</h2>
+        <p class="muted">{{ presentazione_impiattamento or 'n/d' }}</p>
+      </div>
+
+      <div class="card">
+        <h2>Abbinamento Vino</h2>
+        <p class="muted"><strong>Tipo:</strong> {{ vino_descrizione or 'n/d' }}</p>
+        <p class="muted"><strong>Regione:</strong> {{ vino_regione or 'n/d' }}</p>
+        <p class="muted"><strong>Annata:</strong> {{ vino_annata or 'n/d' }}</p>
+        <p class="muted"><strong>Temperatura servizio:</strong> {{ vino_temperatura_servizio or 'n/d' }}</p>
+      </div>
+
+      <div class="card">
+        <h2>Costi</h2>
+        {% if spesa_totale_ricetta or spesa_per_porzione %}
+        <p><strong>Spesa totale ricetta:</strong> €{{ spesa_totale_ricetta or 'n/d' }}</p>
+        <p><strong>Spesa per porzione:</strong> €{{ spesa_per_porzione or 'n/d' }}</p>
+        {% if cost_lines %}
+        <table>
+          <thead>
+            <tr>
+              <th>Ingrediente</th>
+              <th>Quantità</th>
+              <th>Prezzo/kg</th>
+              <th>Prezzo</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in cost_lines %}
+            <tr>
+              <td>{{ row.ingrediente or 'n/d' }}</td>
+              <td>{{ row.quantita_usata or 'n/d' }}</td>
+              <td>€{{ row.prezzo_kg_ud or 'n/d' }}</td>
+              <td>€{{ row.prezzo_calcolato or 'n/d' }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+        {% else %}
+        <p class="muted">Dati costi non disponibili</p>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <h2>Valori Nutrizionali (per 100g)</h2>
+        {% if nutrition_table and nutrition_table.get('100g') %}
+        <table>
+          <tbody>
+            <tr>
+              <td><strong>Energie:</strong></td>
+              <td>{{ nutrition_table['100g'].get('energia', 'n/d') }} kcal</td>
+            </tr>
+            <tr>
+              <td><strong>Proteine:</strong></td>
+              <td>{{ nutrition_table['100g'].get('proteine_totali', 'n/d') }} g</td>
+            </tr>
+            <tr>
+              <td><strong>Grassi:</strong></td>
+              <td>{{ nutrition_table['100g'].get('grassi_totali', 'n/d') }} g</td>
+            </tr>
+            <tr>
+              <td><strong>Carboidrati:</strong></td>
+              <td>{{ nutrition_table['100g'].get('carboidrati_totali', 'n/d') }} g</td>
+            </tr>
+            <tr>
+              <td><strong>Fibre:</strong></td>
+              <td>{{ nutrition_table['100g'].get('fibre', 'n/d') }} g</td>
+            </tr>
+            <tr>
+              <td><strong>Sodio:</strong></td>
+              <td>{{ nutrition_table['100g'].get('sodio', 'n/d') }} mg</td>
+            </tr>
+          </tbody>
+        </table>
+        {% else %}
+        <p class="muted">Dati nutrizionali non disponibili</p>
+        {% endif %}
+      </div>
+    </main>
+  </div>
+</body>
+
+</html>

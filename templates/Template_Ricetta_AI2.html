@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Template Ricetta</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 12.7mm;
+    }
+
+    html,
+    body {
+      padding: 0;
+      margin: 0;
+      font-family: Calibri, Arial, Helvetica, sans-serif;
+      font-size: 11pt;
+    }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      padding: 12.7mm;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 12pt;
+      table-layout: fixed;
+    }
+
+    /* Layout fisso per gestire meglio le colonne */
+    td,
+    th {
+      border: 1px solid #000;
+      padding: 4pt 4pt;
+      vertical-align: top;
+      word-wrap: break-word;
+      font-size: 10pt;
+    }
+
+    .h1 {
+      font-family: "Brush Script MT", cursive;
+      font-size: 35pt;
+      text-align: center;
+      border: none;
+    }
+
+    .field {
+      font-size: 12pt;
+    }
+
+    .blank {
+      border: none;
+    }
+
+    .label {
+      font-weight: 700;
+      margin-top: 10pt;
+      display: block;
+    }
+
+    .block {
+      white-space: pre-wrap;
+      margin-bottom: 6pt;
+    }
+
+    th {
+      background: #f0f0f0;
+      font-weight: bold;
+    }
+
+    .allergenIcons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6pt;
+      margin: 4pt 0 8pt;
+    }
+
+    .allergenIcon {
+      width: 48pt;
+      text-align: center;
+      font-size: 7pt;
+      line-height: 1.1;
+    }
+
+    .allergenIcon img {
+      width: 40pt;
+      height: 40pt;
+      display: block;
+      margin: 0 auto 2pt;
+    }
+
+    .allergenTraceTitle {
+      font-weight: 700;
+      font-size: 9pt;
+      margin-top: 2pt;
+    }
+
+    /* Larghezze specifiche per la tabella costi (7 colonne) */
+    .col-ing {
+      width: 25%;
+    }
+
+    .col-num {
+      width: 12.5%;
+    }
+  </style>
+</head>
+
+<body>
+  {% include "_demo_recipe.html" %}
+  {% if true %}
+  <div class="page">
+
+    <table>
+      <tr style="height:45pt">
+        <td class="h1" colspan="2">RICETTA</td>
+      </tr>
+      <tr>
+        <td class="field" colspan="2">{{ titolo }}</td>
+      </tr>
+      <tr>
+        <td class="field">Porzioni: {{ porzioni }}</td>
+        <td class="field">Tempo totale: {{ tempo_totale or tempo_dettaglio }}</td>
+      </tr>
+      <tr>
+        <td class="field">Tempo di preparazione: {{ tempo_preparazione }}</td>
+        <td class="field">Cottura: {{ tempo_cottura }}</td>
+      </tr>
+      <tr>
+        <td class="field">Difficoltà: {{ difficolta }}</td>
+        <td class="blank"></td>
+      </tr>
+      <tr>
+        <td class="field" colspan="2">
+          <b>Ingredienti:</b>
+          <div class="block">{{ ingredienti_blocco }}</div>
+        </td>
+      </tr>
+    </table>
+
+    <span class="label">Procedimento:</span>
+    <div class="block">{{ procedimento_blocco }}</div>
+
+    <div style="height:6pt;"></div>
+    <span class="label">Conservazione:</span>
+    <div class="block">{{ conservazione }}</div>
+
+    <span class="label">Allergeni:</span>
+    <div class="block">{{ allergeni_elenco }}</div>
+    {% if allergeni_loghi %}
+    <div class="allergenIcons">
+      {% for a in allergeni_loghi %}
+      <div class="allergenIcon">
+        <img src="{{ assets_base }}allergens/{{ a.code }}.svg" alt="{{ a.label }}">
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <span class="label">Abbinamento vino:</span>
+    <div class="block">{{ vino_descrizione }}</div>
+    {% if vino_temperatura_servizio %}
+    <div class="block"><b>Temperatura servizio:</b> {{ vino_temperatura_servizio }}</div>
+    {% endif %}
+    {% if vino_regione %}
+    <div class="block"><b>Regione:</b> {{ vino_regione }}</div>
+    {% endif %}
+    {% if vino_annata %}
+    <div class="block"><b>Annata:</b> {{ vino_annata }}</div>
+    {% endif %}
+    {% if vino_motivo_annata %}
+    <div class="block"><b>Motivo annata:</b> {{ vino_motivo_annata }}</div>
+    {% endif %}
+
+    <div class="block"><b>Adatto a vegetariani:</b> {{ vegetariano_flag }}</div>
+    {% if diete_scelta_alimentare %}
+    <div class="block"><b>Diete per scelta alimentare:</b></div>
+    <div class="block" style="margin-left:16pt;">{{ diete_scelta_alimentare }}</div>
+    {% endif %}
+    {% if diete_cliniche %}
+    <div class="block"><b>Diete cliniche/benessere:</b></div>
+    <div class="block" style="margin-left:16pt;">{{ diete_cliniche }}</div>
+    {% endif %}
+    {% if diete_culturali %}
+    <div class="block"><b>Diete culturali/religiose:</b></div>
+    <div class="block" style="margin-left:16pt;">{{ diete_culturali }}</div>
+    {% endif %}
+    {% if diete_stile %}
+    <div class="block"><b>Diete per stile alimentare:</b></div>
+    <div class="block" style="margin-left:16pt;">{{ diete_stile }}</div>
+    {% endif %}
+
+    <span class="label">Attrezzature:</span>
+    <div class="block">{{ attrezzature_generiche }}</div>
+    <div class="block">{{ attrezzature_specifiche }}</div>
+    {% if attrezzature_semplici %}
+    <div class="block"><b>Semplici:</b> {{ attrezzature_semplici }}</div>
+    {% endif %}
+    {% if attrezzature_professionali %}
+    <div class="block"><b>Professionali:</b> {{ attrezzature_professionali }}</div>
+    {% endif %}
+    {% if attrezzature_pasticceria %}
+    <div style="height:6pt;"></div>
+    <div class="block"><b>Pasticceria:</b> {{ attrezzature_pasticceria }}</div>
+    {% endif %}
+
+    {% if stagionalita %}
+    <span class="label">Stagionalita:</span>
+    <div class="block">{{ stagionalita }}</div>
+    {% endif %}
+
+    <hr style="margin: 20px 0;">
+
+    <span class="label">Valori Nutrizionali (per grammi)</span>
+    <table>
+      <tr>
+        <th>Valori nutrizionali</th>
+        <th>Per 100 g</th>
+        <th>Per intera ricetta</th>
+      </tr>
+      <tr>
+        <td>Energia (Kcal)</td>
+        <td>{{ energia_100g }}</td>
+        <td>{{ energia_totale }}</td>
+      </tr>
+      <tr>
+        <td>Carboidrati (g)</td>
+        <td>{{ carboidrati_totali_100g }}</td>
+        <td>{{ carboidrati_totali_totale }}</td>
+      </tr>
+      <tr>
+        <td><i>di cui zuccheri (g)</i></td>
+        <td>{{ di_cui_zuccheri_100g }}</td>
+        <td>{{ di_cui_zuccheri_totale }}</td>
+      </tr>
+      <tr>
+        <td>Grassi (g)</td>
+        <td>{{ grassi_totali_100g }}</td>
+        <td>{{ grassi_totali_totale }}</td>
+      </tr>
+      <tr>
+        <td><i>di cui saturi (g)</i></td>
+        <td>{{ di_cui_saturi_100g }}</td>
+        <td>{{ di_cui_saturi_totale }}</td>
+      </tr>
+      <tr>
+        <td>Monoinsaturi (g)</td>
+        <td>{{ monoinsaturi_100g }}</td>
+        <td>{{ monoinsaturi_totale }}</td>
+      </tr>
+      <tr>
+        <td>Polinsaturi (g)</td>
+        <td>{{ polinsaturi_100g }}</td>
+        <td>{{ polinsaturi_totale }}</td>
+      </tr>
+      <tr>
+        <td>Proteine (g)</td>
+        <td>{{ proteine_totali_100g }}</td>
+        <td>{{ proteine_totali_totale }}</td>
+      </tr>
+      <tr>
+        <td>Colesterolo (mg)</td>
+        <td>{{ colesterolo_totale_100g }}</td>
+        <td>{{ colesterolo_totale_totale }}</td>
+      </tr>
+      <tr>
+        <td>Fibre (g)</td>
+        <td>{{ fibre_100g }}</td>
+        <td>{{ fibre_totale }}</td>
+      </tr>
+      <tr>
+        <td>Sale/Sodio (mg)</td>
+        <td>{{ sodio_100g }}</td>
+        <td>{{ sodio_totale }}</td>
+      </tr>
+    </table>
+
+    <span class="label">Prezzo del Piatto</span>
+    <table>
+      <colgroup>
+        <col class="col-ing">
+        <col class="col-num">
+        <col class="col-num">
+        <col class="col-num">
+        <col class="col-num">
+        <col class="col-num">
+        <col class="col-num">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Ingrediente</th>
+          <th>Scarto %</th>
+          <th>Peso min. acq.</th>
+          <th>Prezzo (€/kg)</th>
+          <th>Q.tà usata</th>
+          <th>Prezzo acq.</th>
+          <th>Prezzo calc.</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in ingredienti_dettaglio %}
+        <tr>
+          <td>{{ row.ingrediente }}</td>
+          <td>{{ row.scarto }}</td>
+          <td>{{ row.peso_min_acquisto }}</td>
+          <td>{{ row.prezzo_kg_ud }}</td>
+          <td>{{ row.quantita_usata }}</td>
+          <td>{{ row.prezzo_alimento_acquisto }}</td>
+          <td>{{ row.prezzo_calcolato }}</td>
+        </tr>
+        {% endfor %}
+        {% if not ingredienti_dettaglio %}
+        {% endif %}
+      </tbody>
+    </table>
+
+    <div class="block" style="margin-top:10px;">
+      <b>Spesa totale ingredienti:</b> € {{ spesa_totale_acquisto }}<br>
+      <b>Costo effettivo ricetta:</b> € {{ spesa_totale_ricetta }}<br>
+      <b>Costo per porzione:</b> € {{ spesa_per_porzione }}
+    </div>
+
+    <div class="block" style="font-size: 9pt; color: #555; margin-top: 5px;">
+      Prezzi aggiornati secondo: {{ fonte_prezzi }}
+    </div>
+
+  </div>
+  {% endif %}
+</body>
+
+</html>

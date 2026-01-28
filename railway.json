@@ -1,0 +1,11 @@
+# railway.json - Configurazione deploy Railway
+{
+    "build": {
+        "builder": "dockerfile"
+    },
+    "deploy": {
+        "startCommand": "python -m backend.api_rest",
+        "restartPolicyType": "always",
+        "restartPolicyMaxRetries": 5
+    }
+}

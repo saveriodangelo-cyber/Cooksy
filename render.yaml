@@ -1,0 +1,19 @@
+# render.yaml - Configurazione deploy Render.com
+services:
+  - type: web
+    name: cooksy-api
+    runtime: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python -m backend.api_rest"
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_DEBUG
+        value: "0"
+      - key: PORT
+        value: "5000"
+      # Aggiungi qui le tue variabili Stripe e altre config:
+      # - key: STRIPE_SECRET_KEY
+      #   sync: false  # Sincronizza da ambiente
+      # - key: RICETTEPDF_OLLAMA_URL
+      #   value: "https://your-ollama-server.com"

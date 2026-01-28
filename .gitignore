@@ -1,0 +1,17 @@
+/.venv
+.env
+.env.local
+.env.*.local
+*.key
+cloud_ai.json.encrypted
+data/config/*key*
+data/config/*secret*
+data/config/stripe_config.json
+# Build artifacts - NON CARICARE SU GITHUB
+/dist/
+/build/
+*.exe
+*.pyc
+__pycache__/
+*.spec.local
+*.egg-info/

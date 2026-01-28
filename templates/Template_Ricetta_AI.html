@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="it-IT">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <title>
+    </title>
+    <style>
+        body {
+            line-height: 108%;
+            font-family: 'Century Gothic';
+            font-size: 14pt
+        }
+
+        p {
+            margin: 0pt 0pt 8pt
+        }
+
+        li,
+        table {
+            margin-top: 0pt;
+            margin-bottom: 8pt
+        }
+
+        .Footer {
+            margin-bottom: 0pt;
+            line-height: normal;
+            font-size: 14pt
+        }
+
+        .ListParagraph {
+            margin-left: 36pt;
+            margin-bottom: 8pt;
+            line-height: 108%;
+            font-size: 14pt
+        }
+
+        .blockText {
+            white-space: pre-line;
+        }
+
+        .checkGreen {
+            color: #2e7d32;
+            font-weight: 700;
+            font-size: 13pt;
+        }
+
+        .allergenIcons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6pt;
+            margin: 4pt 0 8pt;
+            direction: ltr;
+            justify-content: flex-start;
+        }
+
+        .allergenIcon {
+            width: 48pt;
+            text-align: left;
+            font-size: 7pt;
+            line-height: 1.1;
+        }
+
+        .allergenIcon img {
+            width: 40pt;
+            height: 40pt;
+            display: block;
+            margin: 0 auto 2pt;
+        }
+
+        .allergenTraceTitle {
+            font-weight: 700;
+            font-size: 9pt;
+            margin-top: 2pt;
+        }
+
+        @media (max-width: 900px) {
+            img {
+                max-width: 100%;
+                height: auto;
+            }
+
+            .table-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            td,
+            th {
+                padding: 8px;
+                text-align: left;
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div dir="rtl">
+        <div dir="ltr">
+            <table
+                style="width:521.45pt; margin-bottom:0pt; border:0.75pt solid #bfbfbf; padding:0pt; border-collapse:collapse;">
+                <tbody>
+                    <tr style="height:43.35pt;">
+                        <td colspan="2"
+                            style="width:509.9pt; border-bottom:0.75pt solid #bfbfbf; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr"
+                                style="margin-bottom:0pt; text-align:center; line-height:normal; font-size:35pt;"><span
+                                    style="font-family:Riesling;" dir="ltr">RICETTA</span></p>
+                        </td>
+                    </tr>
+                    <tr style="height:24.95pt;">
+                        <td colspan="2"
+                            style="width:509.9pt; border-top:0.75pt solid #bfbfbf; border-bottom:0.75pt solid #bfbfbf; padding:0pt 5.03pt; vertical-align:middle;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ titolo }}</span></p>
+                        </td>
+                    </tr>
+                    <tr style="height:25.8pt;">
+                        <td
+                            style="width:251.75pt; border-top:0.75pt solid #bfbfbf; border-right:0.75pt solid #bfbfbf; border-bottom:0.75pt solid #bfbfbf; padding:0pt 5.03pt; vertical-align:middle;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">Porzioni: {{ porzioni }}</span></p>
+                        </td>
+                        <td
+                            style="width:247.35pt; border-top:0.75pt solid #bfbfbf; border-left:0.75pt solid #bfbfbf; border-bottom:0.75pt solid #bfbfbf; padding:0pt 5.03pt; vertical-align:middle;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal;"><span dir="ltr"><span
+                                        style="font-size:12pt;">Tempo totale:&nbsp;</span>{{ tempo_totale or
+                                    tempo_dettaglio }}</span></p>
+                        </td>
+                    </tr>
+                    <tr style="height:25.8pt;">
+                        <td
+                            style="width:251.75pt; border-top:0.75pt solid #bfbfbf; border-right:0.75pt solid #bfbfbf; border-bottom:0.75pt solid #bfbfbf; padding:0pt 5.03pt; vertical-align:middle;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">Tempo di preparazione: {{ tempo_preparazione }}</span></p>
+                        </td>
+                        <td
+                            style="width:247.35pt; border-top:0.75pt solid #bfbfbf; border-left:0.75pt solid #bfbfbf; border-bottom:0.75pt solid #bfbfbf; padding:0pt 5.03pt; vertical-align:middle;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">Cottura: {{ tempo_cottura }}</span></p>
+                        </td>
+                    </tr>
+                    <tr style="height:20.65pt;">
+                        <td
+                            style="width:251.75pt; border-top:0.75pt solid #bfbfbf; border-right:0.75pt solid #bfbfbf; border-bottom:0.75pt solid #bfbfbf; padding:0pt 5.03pt; vertical-align:middle;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">Difficolt&agrave;: {{ difficolta }}</span></p>
+                        </td>
+                        <td
+                            style="width:247.35pt; border-top:0.75pt solid #bfbfbf; border-left:0.75pt solid #bfbfbf; border-bottom:0.75pt solid #bfbfbf; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">&nbsp;</span></p>
+                        </td>
+                    </tr>
+                    <tr style="height:25.9pt;">
+                        <td
+                            style="width:251.75pt; border-top:0.75pt solid #bfbfbf; border-right:0.75pt solid #bfbfbf; border-bottom:0.75pt solid #bfbfbf; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">Ingredienti:</span></p>
+                            <div class="blockText" dir="ltr" style="margin-left:32.97pt; font-size:12pt;">{{
+                                ingredienti_blocco }}</div>
+                        </td>
+                        <td
+                            style="width:247.35pt; border-top:0.75pt solid #bfbfbf; border-left:0.75pt solid #bfbfbf; border-bottom:0.75pt solid #bfbfbf; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">&nbsp;</span></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p dir="ltr" style="line-height:108%; font-size:11pt;"><span style="font-weight:bold;"
+                dir="ltr">Procedimento:</span></p>
+        <div class="blockText" dir="ltr" style="margin-left:32.14pt; text-align:left; font-size:12pt;">{{
+            procedimento_blocco }}</div>
+        <p dir="ltr" style="line-height:108%; font-size:12pt; margin-top:6pt;"><span
+                style="line-height:108%; font-size:11pt; font-weight:bold;" dir="ltr">Conservazione:</span><br><span
+                dir="ltr">{{ conservazione }}</span></p>
+        <p dir="ltr" style="line-height:108%; font-size:12pt;"><br style="page-break-before:always; clear:both;"></p>
+        <p dir="ltr" style="line-height:108%; font-size:12pt;">
+            <span style="font-weight:bold;" dir="ltr">Adatto a vegetariani:&nbsp;</span>
+            {% if vegetariano_ok %}
+            <span class="checkGreen">&#10003;</span>
+            {% else %}
+            <span dir="ltr">No</span>
+            {% endif %}
+        </p>
+        {% if diete_scelta_alimentare or diete_cliniche or diete_culturali or diete_stile %}
+        {% if diete_scelta_alimentare %}
+        <p dir="ltr" style="line-height:108%; font-size:12pt;"><span style="font-weight:bold;" dir="ltr">Diete per
+                scelta alimentare:</span></p>
+        <div class="blockText" dir="ltr" style="margin-left:33.08pt; font-size:12pt;">{{ diete_scelta_alimentare }}
+        </div>
+        {% endif %}
+        {% if diete_cliniche %}
+        <p dir="ltr" style="line-height:108%; font-size:12pt;"><span style="font-weight:bold;" dir="ltr">Diete
+                cliniche/benessere:</span></p>
+        <div class="blockText" dir="ltr" style="margin-left:33.08pt; font-size:12pt;">{{ diete_cliniche }}</div>
+        {% endif %}
+        {% if diete_culturali %}
+        <p dir="ltr" style="line-height:108%; font-size:12pt;"><span style="font-weight:bold;" dir="ltr">Diete
+                culturali/religiose:</span></p>
+        <div class="blockText" dir="ltr" style="margin-left:33.08pt; font-size:12pt;">{{ diete_culturali }}</div>
+        {% endif %}
+        {% if diete_stile %}
+        <p dir="ltr" style="line-height:108%; font-size:12pt;"><span style="font-weight:bold;" dir="ltr">Diete per stile
+                alimentare:</span></p>
+        <div class="blockText" dir="ltr" style="margin-left:33.08pt; font-size:12pt;">{{ diete_stile }}</div>
+        {% endif %}
+        {% endif %}
+        <p dir="ltr" style="line-height:108%; font-size:12pt;"><span style="font-weight:bold;"
+                dir="ltr">Allergeni:&nbsp;</span></p>
+        <p dir="ltr" style="line-height:108%; font-size:12pt;"><span style="font-weight:bold;" dir="ltr">{{
+                allergeni_elenco }}</span></p>
+        {% if allergeni_loghi %}
+        <div class="allergenIcons">
+            {% for a in allergeni_loghi %}
+            <div class="allergenIcon">
+                <img src="allergens/{{ a.code }}.svg" alt="{{ a.label }}">
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if allergeni_tracce_loghi %}
+        <div class="allergenTraceTitle">Tracce:</div>
+        <div class="allergenIcons">
+            {% for a in allergeni_tracce_loghi %}
+            <div class="allergenIcon">
+                <img src="allergens/{{ a.code }}.svg" alt="{{ a.label }}">
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <p dir="ltr" style="line-height:108%; font-size:12pt;"><span style="font-weight:bold;" dir="ltr">Abbinamento
+                vino:&nbsp;</span></p>
+        <p dir="ltr" style="line-height:108%; font-size:12pt;"><span style="font-weight:bold;" dir="ltr">{{
+                vino_descrizione }}</span></p>
+        {% if vino_temperatura_servizio %}
+        <p dir="ltr" style="line-height:108%; font-size:12pt;"><span dir="ltr"><b>Temperatura servizio:</b> {{
+                vino_temperatura_servizio }}</span></p>
+        {% endif %}
+        {% if vino_regione %}
+        <p dir="ltr" style="line-height:108%; font-size:12pt;"><span dir="ltr"><b>Regione:</b> {{ vino_regione }}</span>
+        </p>
+        {% endif %}
+        {% if vino_annata %}
+        <p dir="ltr" style="line-height:108%; font-size:12pt;"><span dir="ltr"><b>Annata:</b> {{ vino_annata }}</span>
+        </p>
+        {% endif %}
+        {% if vino_motivo_annata %}
+        <p dir="ltr" style="line-height:108%; font-size:12pt;"><span dir="ltr"><b>Motivo annata:</b> {{
+                vino_motivo_annata }}</span></p>
+        {% endif %}
+        <p dir="ltr" style="line-height:108%; font-size:12pt;"><span style="font-weight:bold;" dir="ltr">Attrezzature
+                specifiche:</span></p>
+        <div class="blockText" dir="ltr" style="margin-left:33.08pt; font-size:12pt; font-weight:bold;">{{
+            attrezzature_specifiche }}</div>
+        <p dir="ltr" style="line-height:108%; font-size:12pt;"><span style="font-weight:bold;" dir="ltr">&nbsp;</span>
+        </p>
+        <p dir="ltr" style="line-height:108%; font-size:12pt;"><span style="font-weight:bold;" dir="ltr">Attrezzature
+                generiche:</span></p>
+        <div class="blockText" dir="ltr" style="margin-left:33.08pt; font-size:12pt; font-weight:bold;">{{
+            attrezzature_generiche }}</div>
+        {% if attrezzature_pasticceria %}
+        <p dir="ltr" style="line-height:108%; font-size:12pt; margin-top:6pt;"><span style="font-weight:bold;"
+                dir="ltr">Attrezzature pasticceria:</span></p>
+        <div class="blockText" dir="ltr" style="margin-left:33.08pt; font-size:12pt; font-weight:bold;">{{
+            attrezzature_pasticceria }}</div>
+        {% endif %}
+        <p dir="ltr" style="line-height:108%; font-size:12pt;"><span style="font-weight:bold;" dir="ltr">&nbsp;</span>
+        </p>
+        <p dir="ltr" style="line-height:108%; font-size:12pt;"><span style="font-weight:bold;" dir="ltr">Presentazione e
+                impiattamento:</span></p>
+        <p dir="ltr" style="line-height:108%; font-size:12pt;"><span style="font-weight:bold;" dir="ltr">{{
+                presentazione_impiattamento }}</span></p>
+        {% if stagionalita %}
+        <p dir="ltr" style="line-height:108%; font-size:12pt;"><span style="font-weight:bold;"
+                dir="ltr">Stagionalita:&nbsp;</span><span dir="ltr">{{ stagionalita }}</span></p>
+        {% endif %}
+        <p dir="ltr" class="ListParagraph"
+            style="margin-left:0pt; margin-bottom:12pt; line-height:108%; font-size:9pt;"><span dir="ltr">&nbsp;</span>
+        </p>
+        <p dir="ltr" style="line-height:108%; font-size:9pt;"><u><span dir="ltr">Valori descritti per grammi</span></u>
+        </p>
+        <div dir="ltr">
+            <table
+                style="width:100%; margin-bottom:0pt; border:0.75pt solid #000000; padding:0pt; border-collapse:collapse;">
+                <tbody>
+                    <tr>
+                        <td
+                            style="width:32.64%; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="line-height:108%; font-size:10pt;"><u><span style="font-weight:bold;"
+                                        dir="ltr">Valori nutrizionali</span></u></p>
+                        </td>
+                        <td
+                            style="width:32.98%; border-right:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="line-height:108%; font-size:10pt;"><u><span style="font-weight:bold;"
+                                        dir="ltr">Per 100 g</span></u></p>
+                        </td>
+                        <td
+                            style="width:34.4%; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="line-height:108%; font-size:10pt;"><u><span style="font-weight:bold;"
+                                        dir="ltr">Per l&rsquo;intera ricetta</span></u></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="width:32.64%; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">Energia (Kcal)</span></p>
+                        </td>
+                        <td style="width:32.98%; border:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ energia_100g }}</span></p>
+                        </td>
+                        <td
+                            style="width:34.4%; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ energia_totale }}</span></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="width:32.64%; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">Carboidrati totali (g)</span></p>
+                        </td>
+                        <td style="width:32.98%; border:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ carboidrati_totali_100g }}</span></p>
+                        </td>
+                        <td
+                            style="width:34.4%; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ carboidrati_totali_totale }}</span></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="width:32.64%; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">Di cui zuccheri (g)</span></p>
+                        </td>
+                        <td style="width:32.98%; border:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ di_cui_zuccheri_100g }}</span></p>
+                        </td>
+                        <td
+                            style="width:34.4%; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ di_cui_zuccheri_totale }}</span></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="width:32.64%; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">Grassi totali (g)</span></p>
+                        </td>
+                        <td style="width:32.98%; border:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ grassi_totali_100g }}</span></p>
+                        </td>
+                        <td
+                            style="width:34.4%; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ grassi_totali_totale }}</span></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="width:32.64%; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">Di cui saturi (g)</span></p>
+                        </td>
+                        <td style="width:32.98%; border:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ di_cui_saturi_100g }}</span></p>
+                        </td>
+                        <td
+                            style="width:34.4%; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ di_cui_saturi_totale }}</span></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="width:32.64%; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">Monoinsaturi (g)</span></p>
+                        </td>
+                        <td style="width:32.98%; border:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ monoinsaturi_100g }}</span></p>
+                        </td>
+                        <td
+                            style="width:34.4%; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ monoinsaturi_totale }}</span></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="width:32.64%; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">Polinsaturi (g)</span></p>
+                        </td>
+                        <td style="width:32.98%; border:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ polinsaturi_100g }}</span></p>
+                        </td>
+                        <td
+                            style="width:34.4%; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ polinsaturi_totale }}</span></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="width:32.64%; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">Proteine totali (g)</span></p>
+                        </td>
+                        <td style="width:32.98%; border:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ proteine_totali_100g }}</span></p>
+                        </td>
+                        <td
+                            style="width:34.4%; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ proteine_totali_totale }}</span></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="width:32.64%; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">Colesterolo totale (mg)</span></p>
+                        </td>
+                        <td style="width:32.98%; border:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ colesterolo_totale_100g }}</span></p>
+                        </td>
+                        <td
+                            style="width:34.4%; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ colesterolo_totale_totale }}</span></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="width:32.64%; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">Fibre (g)</span></p>
+                        </td>
+                        <td style="width:32.98%; border:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ fibre_100g }}</span></p>
+                        </td>
+                        <td
+                            style="width:34.4%; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ fibre_totale }}</span></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td
+                            style="width:32.64%; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">Sodio (mg)</span></p>
+                        </td>
+                        <td
+                            style="width:32.98%; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-left:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ sodio_100g }}</span></p>
+                        </td>
+                        <td
+                            style="width:34.4%; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ sodio_totale }}</span></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p dir="ltr" style="text-align: center;"><br></p>
+        <p dir="ltr" style="text-align: center;"><br></p>
+        <p dir="ltr" style="text-align: center;"><u><span dir="ltr">Prezzo del Piatto:</span></u></p>
+        <p dir="ltr" style="text-align: center;"><br></p>
+        <div dir="ltr">
+            <table
+                style="width:101.08%; margin-bottom:0pt; border:0.75pt solid #000000; padding:0pt; border-collapse:collapse;">
+                <tbody>
+                    <tr>
+                        <td
+                            style="width:18%; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="line-height:108%; font-size:9pt;"><u><span style="font-weight:bold;"
+                                        dir="ltr">Ingrediente</span></u></p>
+                        </td>
+                        <td
+                            style="width:7%; border-right:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="line-height:108%; font-size:9pt;"><u><span style="font-weight:bold;"
+                                        dir="ltr">Scarto %</span></u></p>
+                        </td>
+                        <td
+                            style="width:16%; border-right:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="line-height:108%; font-size:9pt;"><u><span style="font-weight:bold;"
+                                        dir="ltr">Peso minimo d&apos;acquisto</span></u></p>
+                        </td>
+                        <td
+                            style="width:12%; border-right:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="line-height:108%; font-size:9pt;"><u><span style="font-weight:bold;"
+                                        dir="ltr">Prezzo per kg o per unit&agrave;</span></u></p>
+                        </td>
+                        <td
+                            style="width:15%; border-right:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="line-height:108%; font-size:9pt;"><u><span style="font-weight:bold;"
+                                        dir="ltr">Quantit&agrave; utilizzata nella ricetta</span></u></p>
+                        </td>
+                        <td
+                            style="width:15%; border-right:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="line-height:108%; font-size:9pt;"><u><span style="font-weight:bold;"
+                                        dir="ltr">Prezzo dell&apos;alimento acquistato</span></u></p>
+                        </td>
+                        <td
+                            style="width:17%; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="line-height:108%; font-size:9pt;"><u><span style="font-weight:bold;"
+                                        dir="ltr">Prezzo calcolato per la quantit&agrave; utilizzata</span></u></p>
+                        </td>
+                    </tr>
+                    {% for row in ingredienti_dettaglio %}
+                    <tr>
+                        <td
+                            style="width:18%; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ row.ingrediente }}</span></p>
+                        </td>
+                        <td style="width:7%; border:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ row.scarto }}</span></p>
+                        </td>
+                        <td style="width:16%; border:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ row.peso_min_acquisto }}</span></p>
+                        </td>
+                        <td style="width:12%; border:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ row.prezzo_kg_ud }}</span></p>
+                        </td>
+                        <td style="width:15%; border:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ row.quantita_usata }}</span></p>
+                        </td>
+                        <td style="width:15%; border:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ row.prezzo_alimento_acquisto }}</span></p>
+                        </td>
+                        <td
+                            style="width:17%; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:0pt 5.03pt; vertical-align:top;">
+                            <p dir="ltr" style="margin-bottom:0pt; line-height:normal; font-size:12pt;"><span
+                                    dir="ltr">{{ row.prezzo_calcolato }}</span></p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not ingredienti_dettaglio %}
+                    <tr>
+                        <td colspan="7"
+                            style="border-top:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding:6pt; text-align:center;">
+                            Dati costo non disponibili</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+        <p><span style="line-height:108%; font-family:'Century Gothic'; font-size:12pt;" dir="ltr"><br></span></p>
+        <p><span style="line-height:108%; font-family:'Century Gothic'; font-size:12pt;" dir="ltr"><br></span></p>
+        <ul style="margin:0pt;">
+            <li dir="ltr" class="ListParagraph"
+                style="margin-left:10.06pt; text-align:left; line-height:108%; padding-left:7.94pt; font-family:serif; font-size:11pt;">
+                <span style="line-height:108%; font-family:'Century Gothic'; font-size:12pt;" dir="ltr">Spesa totale per
+                    acquisto ingredienti: {{ spesa_totale_acquisto }} &euro;</span>
+            </li>
+            <li dir="ltr"
+                style="margin-left:9.6pt; text-align:left; line-height:108%; padding-left:8.4pt; font-family:serif; font-size:10pt;">
+                <span style="line-height:108%; font-family:'Century Gothic'; font-size:12pt;" dir="ltr">Spesa totale
+                    effettiva della ricetta: {{ spesa_totale_ricetta }} &euro;</span>
+            </li>
+            <li dir="ltr"
+                style="margin-left:9.6pt; text-align:left; line-height:108%; padding-left:8.4pt; font-family:serif; font-size:10pt;">
+                <span style="line-height:108%; font-family:'Century Gothic'; font-size:12pt;" dir="ltr">Spesa per
+                    singola porzione: {{ spesa_per_porzione }} &euro;</span>
+            </li>
+        </ul>
+    </div>
+</body>
+
+</html>

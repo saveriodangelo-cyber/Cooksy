@@ -1,0 +1,7 @@
+{
+    "github.copilot.chat.agent.autoFix": true,
+    "workbench.editor.autoLockGroups": {
+        "workbench.editor.chatSession": true
+    },
+    "workbench.editor.alwaysShowEditorActions": false
+}

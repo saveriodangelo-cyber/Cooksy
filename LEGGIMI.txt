@@ -1,0 +1,19 @@
+Cooksy - Istruzioni di Avvio
+=============================
+
+1. Avvia il programma:
+   - Fai doppio clic su "Cooksy.exe".
+   - Non serve installare Python o altri programmi.
+
+2. Requisiti:
+   - Windows 10 o superiore.
+   - Nessuna installazione richiesta.
+
+3. Risoluzione problemi:
+   - Se l'antivirus segnala il file, aggiungilo alle eccezioni.
+   - Se vedi schermate vuote o errori, assicurati di aver estratto tutti i file dalla cartella.
+
+4. Supporto:
+   - Per assistenza, contatta lo sviluppatore.
+
+Grazie per aver scelto Cooksy!

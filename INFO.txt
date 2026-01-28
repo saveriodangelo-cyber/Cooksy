@@ -1,0 +1,12 @@
+Cooksy - Informazioni
+====================
+
+Sviluppatore: Saverio
+Versione: 2026.01
+Sito: https://www.cooksy.app (se disponibile)
+Contatti: info@cooksy.app (o email di supporto)
+
+Descrizione:
+Cooksy è un software desktop per la gestione, digitalizzazione e stampa di ricette, con funzioni di AI e OCR integrate.
+
+Per assistenza tecnica, consultare il file LEGGIMI.txt o contattare il supporto.

@@ -1,0 +1,8 @@
+Cooksy - Licenza d'Uso
+====================
+
+Questo software è fornito con licenza proprietaria.
+È vietata la copia, la distribuzione o la modifica senza autorizzazione scritta.
+Per dettagli, consultare il file LICENSE.md incluso nel pacchetto originale.
+
+© 2026 Saverio - Tutti i diritti riservati.

@@ -1,0 +1,788 @@
+<!doctype html>
+<html lang="it">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ titolo }} - Design Moderno</title>
+  <style>
+    :root {
+      --bg-1: #f6f2ee;
+      --bg-2: #fff9f3;
+      --card: #ffffff;
+      --ink: #1f2a2d;
+      --muted: #5f6b6f;
+      --accent: #3f7b82;
+      --accent-2: #e6b7a9;
+      --accent-3: #f2e6de;
+      --radius: 18px;
+      --shadow: 0 18px 40px rgba(18, 27, 30, 0.08);
+      font-family: "Poppins", "Segoe UI", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      padding: 28px;
+      color: var(--ink);
+      background: linear-gradient(140deg, var(--bg-1), var(--bg-2));
+    }
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 1.4fr;
+      gap: 24px;
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 26px;
+      box-shadow: var(--shadow);
+      animation: fadeUp 0.6s ease;
+    }
+
+    .photo {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      min-height: 240px;
+      background: linear-gradient(180deg, var(--accent-3), #fff);
+    }
+
+    .photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block
+    }
+
+    .photo .fallback {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.72rem;
+      color: var(--accent);
+    }
+
+    h1 {
+      margin: 8px 0 10px;
+      font-size: 2.1rem;
+      line-height: 1.1
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .meta-item {
+      background: var(--accent-3);
+      border-radius: 12px;
+      padding: 10px 12px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .meta-item strong {
+      display: block;
+      color: var(--accent);
+      font-size: 0.75rem;
+      text-transform: uppercase
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px
+    }
+
+    .chip {
+      background: var(--accent);
+      color: #fff;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 0.85rem
+    }
+
+    .section {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 22px;
+      margin-top: 20px;
+      box-shadow: var(--shadow);
+      animation: fadeUp 0.6s ease;
+    }
+
+    .section h2 {
+      margin: 0 0 12px;
+      font-size: 1.25rem;
+      color: var(--accent)
+    }
+
+    .section h3 {
+      margin: 14px 0 8px;
+      font-size: 1rem;
+      color: var(--accent)
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 18px;
+    }
+
+    .ingredients ul {
+      margin: 0;
+      padding: 0;
+      list-style: none
+    }
+
+    .ingredients li {
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      border-radius: 10px;
+      background: var(--accent-3);
+      line-height: 1.4;
+    }
+
+    .example {
+      border: 1px dashed var(--accent-2);
+      background: #fffaf8
+    }
+
+    .steps ol {
+      margin: 0;
+      padding-left: 18px;
+      line-height: 1.5
+    }
+
+    .steps li {
+      margin-bottom: 10px;
+      color: var(--muted)
+    }
+
+    .nutrition {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .nutrition .card {
+      background: #f7f4f1;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .nutrition .value {
+      font-size: 1.2rem;
+      color: var(--accent);
+      font-weight: 700
+    }
+
+    .nutri-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem
+    }
+
+    .nutri-table th,
+    .nutri-table td {
+      padding: 8px 6px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+      vertical-align: top
+    }
+
+    .nutri-table th {
+      color: var(--accent);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 0.9rem
+    }
+
+    .edit-panel {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+      margin-top: 12px
+    }
+
+    .edit-panel h2 {
+      margin: 0 0 10px;
+      font-size: 1.1rem;
+      color: var(--accent)
+    }
+
+    .edit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px
+    }
+
+    .edit-field label {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em
+    }
+
+    .edit-field input,
+    .edit-field textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid #e6e0d8;
+      background: #fff;
+      font-size: 0.95rem
+    }
+
+    .edit-field textarea {
+      min-height: 70px;
+      resize: vertical
+    }
+
+    .edit-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 10px
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @media print {
+      * {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important
+      }
+    }
+
+    @media (max-width:860px) {
+      body {
+        padding: 16px
+      }
+
+      .hero {
+        grid-template-columns: 1fr
+      }
+
+      .grid {
+        grid-template-columns: 1fr
+      }
+
+      .meta-grid {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .nutrition {
+        grid-template-columns: repeat(2, 1fr)
+      }
+    }
+
+    /* --- Integrazione sezioni aggiunte (layout only) --- */
+    .base-fields {
+      margin-top: 16px;
+    }
+
+    .costi {
+      max-width: var(--maxw, 1080px);
+      margin: 18px auto;
+      padding: 16px;
+      background: var(--card, var(--paper, transparent));
+      border: 1px solid var(--border, var(--line, rgba(0, 0, 0, 0.10)));
+      border-radius: 16px;
+    }
+
+    .costi h2 {
+      margin: 0 0 10px;
+    }
+
+    .costi .note {
+      margin: 0 0 12px;
+    }
+
+    .costi table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+  </style>
+</head>
+
+<body>
+
+
+  {% if true %}
+  <div id="topbar"
+    style="position:fixed;left:0;right:0;top:0;display:flex;align-items:center;gap:10px;padding:12px 24px;z-index:60;background:linear-gradient(90deg,rgba(255,255,255,0.85),rgba(246,242,238,0.9));box-shadow:0 6px 20px rgba(18,27,30,0.06);">
+    <button id="btnSelect"
+      style="background:var(--accent);color:#fff;border:0;padding:8px 12px;border-radius:10px;cursor:pointer">Seleziona
+      immagine/i...</button>
+    <button id="btnProcess"
+      style="background:var(--accent-2);color:#222;border:0;padding:8px 12px;border-radius:10px;cursor:pointer"
+      disabled>Elabora ricetta</button>
+    <select id="tplSelect"
+      style="padding:7px 10px;border-radius:8px;border:1px solid #e6e0d8;background:transparent;color:var(--ink)"></select>
+    <button id="btnShowSample"
+      style="background:transparent;color:var(--accent);border:1px solid var(--accent);padding:8px 12px;border-radius:10px;cursor:pointer">Mostra
+      ricetta di prova</button>
+    <div id="selectedList" style="margin-left:12px;color:var(--muted);font-size:0.95rem"></div>
+    <div id="jobStatus" style="margin-left:auto;color:var(--muted);font-size:0.95rem"></div>
+  </div>
+  <div style="height:64px"></div>
+  <div class="page">
+    <section class="hero">
+      <div class="photo">
+        {% if image_src %}
+        <img src="{{ image_src }}" alt="Foto ricetta">
+        {% else %}
+        {% endif %}
+      </div>
+      <div>
+        <div class="eyebrow">
+          {{ categoria or 'n/d' }}{% if sottocategoria %} - {{ sottocategoria }}{% endif %}
+        </div>
+        <h1>{{ titolo }}</h1>
+        <div class="meta-grid">
+          <div class="meta-item"><strong>Porzioni</strong>{{ porzioni or 'n/d' }}</div>
+          <div class="meta-item"><strong>Tempo</strong>{{ tempo or 'n/d' }}</div>
+          <div class="meta-item"><strong>Difficolta</strong>{{ difficolta or 'n/d' }}</div>
+          <div class="meta-item"><strong>Peso / resa</strong>
+            {% if peso_totale_ricetta_g > 0 %}
+            {{ peso_totale_ricetta_g }} g
+            {% elif resa_totale %}
+            {{ resa_totale }}
+            {% else %}
+            n/d
+            {% endif %}
+          </div>
+        </div>
+
+
+
+
+        {% if energia_100g > 0 %}
+        <div class="chips">
+          <div class="chip">{{ energia_100g }} kcal / 100 g</div>
+          <div class="chip">{{ proteine_100g }} g proteine</div>
+          <div class="chip">{{ carboidrati_100g }} g carboidrati</div>
+        </div>
+        {% endif %}
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Dati tecnici</h2>
+      <table class="nutri-table">
+        <tbody>
+          <tr>
+            <th>Metodo principale</th>
+            <td>{{ metodo_principale or 'n/d' }}</td>
+            <th>Porzione standard</th>
+            <td>{{ porzione_standard_display or 'n/d' }}</td>
+          </tr>
+          <tr>
+            <th>Attrezzature</th>
+            <td>{{ attrezzature or 'n/d' }}</td>
+          </tr>
+          <tr>
+            <th>Tempo preparazione</th>
+            <td>{{ tempo_preparazione or 'n/d' }}</td>
+            <th>Tempo cottura</th>
+            <td>{{ tempo_cottura or 'n/d' }}</td>
+          </tr>
+          <tr>
+            <th>Tempo riposo</th>
+            <td>{{ tempo_riposo or 'n/d' }}</td>
+            <th>Tempo totale</th>
+            <td>{{ tempo_totale or tempo or 'n/d' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section grid">
+      <div class="ingredients">
+        <h2>Ingredienti</h2>
+        {% set ingredienti_text = ingredienti.strip() %}
+        {% if ingredienti_text %}
+        <ul>
+          {% for line in ingredienti_text.split('\\n') %}
+          {% if line.strip() %}
+          <li>{{ line.replace('•','').strip() }}</li>
+          {% endif %}
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+      <div class="steps">
+        <h2>Procedimento</h2>
+        {% set procedimento_text = procedimento.strip() %}
+        {% if procedimento_text %}
+        <ol>
+          {% for line in procedimento_text.split('\\n') %}
+          {% if line.strip() %}
+          <li>{{ line.replace('•','').strip() }}</li>
+          {% endif %}
+          {% endfor %}
+        </ol>
+        {% endif %}
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Ingredienti strutturati</h2>
+      {% if ingredienti_componenti %}
+      {% for group in ingredienti_componenti %}
+      <h3>{{ group.name }}</h3>
+      <table class="nutri-table">
+        <thead>
+          <tr>
+            <th>Ingrediente</th>
+            <th>Quantita</th>
+            <th>Unita</th>
+            <th>Note</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in group["items"] %}
+          <tr>
+            <td>{{ item.nome or 'n/d' }}</td>
+            <td>{% if item.quantita and item.quantita > 0 %}{{ item.quantita }}{% else %}{{ item.quantita_raw or 'n/d'
+              }}{% endif %}</td>
+            <td>{{ item.unita or 'n/d' }}</td>
+            <td>{{ item.note or 'n/d' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endfor %}
+      {% endif %}
+      {% if ingredienti_varianti %}
+      <p class="note">Varianti: {{ ingredienti_varianti }}</p>
+      {% endif %}
+    </section>
+
+    <section class="section">
+      <h2>Approfondimenti procedimento</h2>
+    </section>
+
+    <section class="section">
+      <h2>Valori nutrizionali</h2>
+      {% if energia_100g > 0 %}
+      <div class="nutrition">
+        <div class="card">
+          <div class="value">{{ energia_100g }}</div>
+          <div class="note">kcal / 100 g</div>
+        </div>
+        <div class="card">
+          <div class="value">{{ proteine_100g }}</div>
+          <div class="note">g proteine / 100 g</div>
+        </div>
+        <div class="card">
+          <div class="value">{{ grassi_totali_100g }}</div>
+          <div class="note">g grassi / 100 g</div>
+        </div>
+        <div class="card">
+          <div class="value">{{ fibre_100g }}</div>
+          <div class="note">g fibre / 100 g</div>
+        </div>
+      </div>
+      {% else %}
+      <p class="note">Valori nutrizionali non disponibili.</p>
+      {% endif %}
+      <table class="nutri-table">
+        <thead>
+          <tr>
+            <th>Nutriente</th>
+            <th>Per 100 g</th>
+            <th>Per porzione</th>
+            <th>Per ricetta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Energia</td>
+            <td>{% if energia_100g > 0 %}{{ energia_100g }} kcal ({{ energia_100g_kj }} kJ){% else %}n/d{% endif %}</td>
+            <td>{% if energia_porzione > 0 %}{{ energia_porzione }} kcal ({{ energia_porzione_kj }} kJ){% else %}n/d{%
+              endif %}</td>
+            <td>{% if energia_ricetta > 0 %}{{ energia_ricetta }} kcal ({{ energia_ricetta_kj }} kJ){% else %}n/d{%
+              endif %}</td>
+          </tr>
+          <tr>
+            <td>Carboidrati</td>
+            <td>{{ carboidrati_100g if carboidrati_100g > 0 else 'n/d' }} g</td>
+            <td>{{ carboidrati_porzione if carboidrati_porzione > 0 else 'n/d' }} g</td>
+            <td>{{ carboidrati_ricetta if carboidrati_ricetta > 0 else 'n/d' }} g</td>
+          </tr>
+          <tr>
+            <td>Zuccheri</td>
+            <td>{{ zuccheri_100g if zuccheri_100g > 0 else 'n/d' }} g</td>
+            <td>{{ zuccheri_porzione if zuccheri_porzione > 0 else 'n/d' }} g</td>
+            <td>{{ zuccheri_ricetta if zuccheri_ricetta > 0 else 'n/d' }} g</td>
+          </tr>
+          <tr>
+            <td>Proteine</td>
+            <td>{{ proteine_100g if proteine_100g > 0 else 'n/d' }} g</td>
+            <td>{{ proteine_porzione if proteine_porzione > 0 else 'n/d' }} g</td>
+            <td>{{ proteine_ricetta if proteine_ricetta > 0 else 'n/d' }} g</td>
+          </tr>
+          <tr>
+            <td>Grassi totali</td>
+            <td>{{ grassi_totali_100g if grassi_totali_100g > 0 else 'n/d' }} g</td>
+            <td>{{ grassi_totali_porzione if grassi_totali_porzione > 0 else 'n/d' }} g</td>
+            <td>{{ grassi_totali_ricetta if grassi_totali_ricetta > 0 else 'n/d' }} g</td>
+          </tr>
+          <tr>
+            <td>Grassi saturi</td>
+            <td>{{ grassi_saturi_100g if grassi_saturi_100g > 0 else 'n/d' }} g</td>
+            <td>{{ grassi_saturi_porzione if grassi_saturi_porzione > 0 else 'n/d' }} g</td>
+            <td>{{ grassi_saturi_ricetta if grassi_saturi_ricetta > 0 else 'n/d' }} g</td>
+          </tr>
+          <tr>
+            <td>Grassi monoinsaturi</td>
+            <td>{{ grassi_monoinsaturi_100g if grassi_monoinsaturi_100g > 0 else 'n/d' }} g</td>
+            <td>{{ grassi_monoinsaturi_porzione if grassi_monoinsaturi_porzione > 0 else 'n/d' }} g</td>
+            <td>{{ grassi_monoinsaturi_ricetta if grassi_monoinsaturi_ricetta > 0 else 'n/d' }} g</td>
+          </tr>
+          <tr>
+            <td>Grassi polinsaturi</td>
+            <td>{{ grassi_polinsaturi_100g if grassi_polinsaturi_100g > 0 else 'n/d' }} g</td>
+            <td>{{ grassi_polinsaturi_porzione if grassi_polinsaturi_porzione > 0 else 'n/d' }} g</td>
+            <td>{{ grassi_polinsaturi_ricetta if grassi_polinsaturi_ricetta > 0 else 'n/d' }} g</td>
+          </tr>
+          <tr>
+            <td>Fibre</td>
+            <td>{{ fibre_100g if fibre_100g > 0 else 'n/d' }} g</td>
+            <td>{{ fibre_porzione if fibre_porzione > 0 else 'n/d' }} g</td>
+            <td>{{ fibre_ricetta if fibre_ricetta > 0 else 'n/d' }} g</td>
+          </tr>
+          <tr>
+            <td>Sodio</td>
+            <td>{{ sodio_100g_mg if sodio_100g_mg > 0 else 'n/d' }} mg</td>
+            <td>{{ sodio_porzione_mg if sodio_porzione_mg > 0 else 'n/d' }} mg</td>
+            <td>{{ sodio_ricetta_mg if sodio_ricetta_mg > 0 else 'n/d' }} mg</td>
+          </tr>
+          <tr>
+            <td>Colesterolo</td>
+            <td>{{ colesterolo_100g_mg if colesterolo_100g_mg > 0 else 'n/d' }} mg</td>
+            <td>{{ colesterolo_porzione_mg if colesterolo_porzione_mg > 0 else 'n/d' }} mg</td>
+            <td>{{ colesterolo_ricetta_mg if colesterolo_ricetta_mg > 0 else 'n/d' }} mg</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>Sicurezza alimentare e conservazione</h2>
+      <table class="nutri-table">
+        <tbody>
+          <tr>
+            <th>Conservazione</th>
+            <td>{{ conservazione or 'n/d' }}</td>
+          </tr>
+          <tr>
+            <th>Note HACCP</th>
+            <td>{{ note_haccp or 'n/d' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>Allergeni e diete</h2>
+      <p class="note"><strong>Allergeni:</strong> {{ allergeni_text or 'n/d' }}</p>
+      <p class="note"><strong>Diete:</strong> {{ diete_text or 'n/d' }}</p>
+    </section>
+
+  </div>
+
+
+  {% endif %}
+</body>
+
+<script>
+  (function () {
+    const btnSelect = document.getElementById('btnSelect');
+    const btnProcess = document.getElementById('btnProcess');
+    const btnShowSample = document.getElementById('btnShowSample');
+    const selectedList = document.getElementById('selectedList');
+    const tplSelect = document.getElementById('tplSelect');
+    let selectedFiles = [];
+
+    async function chooseFiles() {
+      try {
+        const files = await window.pywebview.api.open_file_dialog();
+        if (Array.isArray(files) && files.length) {
+          selectedFiles = files;
+          selectedList.textContent = files.map(f => f.split(/[\\\/]/).pop()).join(', ');
+          btnProcess.removeAttribute('disabled');
+        } else {
+          selectedFiles = [];
+          selectedList.textContent = '';
+          btnProcess.setAttribute('disabled', 'true');
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function processSelected() {
+      if (!selectedFiles.length) return;
+      try {
+        const tpl = (tplSelect && tplSelect.value) ? tplSelect.value : 'design_moderno';
+        // use async job API to get job id and poll status
+        const start = await window.pywebview.api.start_process_images(selectedFiles, tpl, 'html', null, null);
+        if (!start || !start.ok) {
+          alert('Impossibile avviare il job: ' + (start && start.error ? start.error : 'Errore'));
+          return;
+        }
+        const jobId = start.job_id;
+        const jobEl = document.getElementById('jobStatus');
+        jobEl.textContent = `Job ${jobId}: in coda...`;
+        btnProcess.setAttribute('disabled', 'true');
+
+        // poll status
+        let finished = false;
+        while (!finished) {
+          await new Promise(r => setTimeout(r, 600));
+          try {
+            const status = await window.pywebview.api.get_job_status(jobId);
+            if (status && status.ok) {
+              const job = status;
+              jobEl.textContent = `Job ${jobId}: ${job.status} (${job.done || 0}/${job.total || 0})`;
+              if (job.status === 'done' || job.status === 'error') {
+                finished = true;
+                if (job.status === 'error') {
+                  alert('Job terminato con errore: ' + (job.error || ''));
+                }
+              }
+            }
+          } catch (e) {
+            console.warn('poll error', e);
+          }
+        }
+
+        // job finished: fetch autosave recipe to show preview
+        try {
+          const autos = await window.pywebview.api.get_autosave();
+          if (autos && autos.ok && autos.data) {
+            const rec = autos.data;
+            // render preview for first image
+            try {
+              const preview = await window.pywebview.api.render_template_preview(tpl, null, selectedFiles[0]);
+              if (preview && preview.ok && preview.html) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(preview.html, 'text/html');
+                const newPage = doc.querySelector('.page');
+                const curPage = document.querySelector('.page');
+                if (newPage && curPage) { curPage.innerHTML = newPage.innerHTML; }
+              }
+            } catch (e) { console.warn('preview after job failed', e) }
+          }
+        } catch (e) { console.warn('get_autosave failed', e) }
+
+        btnProcess.removeAttribute('disabled');
+        jobEl.textContent = '';
+      } catch (e) {
+        console.error(e); alert('Errore elaborazione: ' + e);
+        try { document.getElementById('jobStatus').textContent = ''; } catch (_) { }
+        btnProcess.removeAttribute('disabled');
+      }
+    }
+
+    async function showSample() {
+      try {
+        const tpl = (tplSelect && tplSelect.value) ? tplSelect.value : 'design_moderno';
+        const preview = await window.pywebview.api.render_template_preview(tpl, null, null);
+        if (preview && preview.ok && preview.html) {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(preview.html, 'text/html');
+          const newPage = doc.querySelector('.page');
+          const curPage = document.querySelector('.page');
+          if (newPage && curPage) {
+            curPage.innerHTML = newPage.innerHTML;
+            return;
+          }
+        } else {
+          alert('Impossibile generare anteprima di prova.');
+        }
+      } catch (e) { console.error(e); alert('Errore: ' + e) }
+    }
+
+    async function initTemplates() {
+      try {
+        const tplList = await window.pywebview.api.get_templates();
+        if (Array.isArray(tplList) && tplList.length && tplSelect) {
+          tplSelect.innerHTML = '';
+          tplList.forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = (t && (t.id || t[0])) || 'design_moderno';
+            opt.textContent = (t && (t.name || t.id || t[0])) || opt.value;
+            tplSelect.appendChild(opt);
+          });
+        } else if (tplSelect) {
+          const opt = document.createElement('option'); opt.value = 'design_moderno'; opt.textContent = 'Design Moderno'; tplSelect.appendChild(opt);
+        }
+      } catch (e) {
+        console.warn('get_templates failed', e);
+        if (tplSelect) { const opt = document.createElement('option'); opt.value = 'design_moderno'; opt.textContent = 'Design Moderno'; tplSelect.appendChild(opt); }
+      }
+      setTimeout(showSample, 300);
+    }
+
+    btnSelect.addEventListener('click', chooseFiles);
+    btnProcess.addEventListener('click', processSelected);
+    btnShowSample.addEventListener('click', showSample);
+    window.addEventListener('pywebviewready', initTemplates);
+    setTimeout(initTemplates, 300);
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>\"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
+    }
+    function fmtEur(v) {
+      const n = Number(v);
+      if (!isFinite(n)) return 'n/d';
+      return n.toFixed(2) + ' €';
+    }
+  })();
+</script>
+
+</html>

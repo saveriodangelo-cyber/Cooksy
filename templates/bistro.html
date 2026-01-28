@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="it">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ titolo }} - Bistro</title>
+  <style>
+    :root {
+      --bg: #f6f1e8;
+      --card: #fffaf3;
+      --ink: #2e261f;
+      --muted: #6f655c;
+      --accent: #b4532a;
+      --accent-2: #e9d8c8;
+      --border: #e3d5c6;
+      font-family: "Fira Sans", "Helvetica", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      padding: 26px
+    }
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto
+    }
+
+    .top {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      padding: 16px;
+      background: linear-gradient(90deg, #fff6eb, #f9e8d8);
+      border-radius: 18px;
+      border: 1px solid var(--border)
+    }
+
+    .top h1 {
+      margin: 0;
+      font-size: 2.3rem;
+      font-family: "Oswald", "Arial", sans-serif;
+      letter-spacing: 0.02em
+    }
+
+    .top .meta {
+      margin-left: auto;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap
+    }
+
+    .pill {
+      background: var(--card);
+      border: 1px dashed var(--accent);
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 0.9rem
+    }
+
+    .pill strong {
+      color: var(--accent);
+      font-weight: 700;
+      margin-right: 6px
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 18px
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 16px;
+      border-radius: 16px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06)
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      color: var(--accent);
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 0.18em
+    }
+
+    h3 {
+      margin: 12px 0 6px;
+      font-size: 1rem;
+      color: var(--accent)
+    }
+
+    ul,
+    ol {
+      margin: 0;
+      padding-left: 18px
+    }
+
+    li {
+      margin-bottom: 6px
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.93rem
+    }
+
+    th,
+    td {
+      border: 1px solid var(--border);
+      padding: 8px;
+      vertical-align: top
+    }
+
+    th {
+      background: #f6e9dc;
+      text-align: left
+    }
+
+    .muted {
+      color: var(--muted)
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 18px;
+      margin-top: 18px
+    }
+
+    @media(max-width:900px) {
+      body {
+        padding: 18px
+      }
+
+      .top {
+        flex-direction: column;
+        align-items: flex-start
+      }
+
+      .grid,
+      .split {
+        grid-template-columns: 1fr
+      }
+    }
+
+    /* --- Integrazione sezioni aggiunte (layout only) --- */
+    .base-fields {
+      margin-top: 16px;
+    }
+
+    .costi {
+      max-width: var(--maxw, 1080px);
+      margin: 18px auto;
+      padding: 16px;
+      background: var(--card, var(--paper, transparent));
+      border: 1px solid var(--border, var(--line, rgba(0, 0, 0, 0.10)));
+      border-radius: 16px;
+    }
+
+    .costi h2 {
+      margin: 0 0 10px;
+    }
+
+    .costi .note {
+      margin: 0 0 12px;
+    }
+
+    .costi table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+  </style>
+</head>
+
+<body>
+
+
+  {% if true %}
+  <div class="page">
+    <header class="top">
+      <div>
+        <div class="muted" style="letter-spacing:0.2em;text-transform:uppercase;font-size:0.75rem;">Menu bistro</div>
+        <h1>{{ titolo }}</h1>
+        <div class="muted">{{ categoria or 'n/d' }}{% if sottocategoria %} - {{ sottocategoria }}{% endif %}</div>
+      </div>
+      <div class="meta">
+        <div class="pill"><strong>Porzioni</strong>{{ porzioni or 'n/d' }}</div>
+        <div class="pill"><strong>Tempo</strong>{{ tempo or 'n/d' }}</div>
+        <div class="pill"><strong>Difficolta</strong>{{ difficolta or 'n/d' }}</div>
+        <div class="pill"><strong>Resa</strong>{% if peso_totale_ricetta_g > 0 %}{{ peso_totale_ricetta_g }} g{% elif
+          resa_totale %}{{ resa_totale }}{% else %}n/d{% endif %}</div>
+      </div>
+    </header>
+
+
+
+
+
+    <div class="grid">
+      <section class="card">
+        <h2>Ingredienti</h2>
+        {% set ingredienti_text = ingredienti.strip() %}
+        {% if ingredienti_text %}
+        <ul>
+          {% for line in ingredienti_text.split('\n') %}
+          {% if line.strip() %}<li>{{ line.strip() }}</li>{% endif %}
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </section>
+      <section class="card">
+        <h2>Procedimento</h2>
+        {% set procedimento_text = procedimento.strip() %}
+        {% if procedimento_text %}
+        <ol>
+          {% for line in procedimento_text.split('\n') %}
+          {% if line.strip() %}<li>{{ line.strip() }}</li>{% endif %}
+          {% endfor %}
+        </ol>
+        {% endif %}
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:18px;">
+      <h2>Dati tecnici</h2>
+      <table>
+        <tbody>
+          <tr>
+            <th>Metodo principale</th>
+            <td>{{ metodo_principale or 'n/d' }}</td>
+            <th>Porzione standard</th>
+            <td>{{ porzione_standard_display or 'n/d' }}</td>
+          </tr>
+          <tr>
+            <th>Attrezzature</th>
+            <td>{{ attrezzature or 'n/d' }}</td>
+          </tr>
+          <tr>
+            <th>Tempo prep</th>
+            <td>{{ tempo_preparazione or 'n/d' }}</td>
+            <th>Tempo cottura</th>
+            <td>{{ tempo_cottura or 'n/d' }}</td>
+          </tr>
+          <tr>
+            <th>Tempo riposo</th>
+            <td>{{ tempo_riposo or 'n/d' }}</td>
+            <th>Tempo totale</th>
+            <td>{{ tempo_totale or tempo or 'n/d' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" style="margin-top:18px;">
+      <h2>Ingredienti strutturati</h2>
+      {% if ingredienti_componenti %}
+      {% for group in ingredienti_componenti %}
+      <h3>{{ group.name }}</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Ingrediente</th>
+            <th>Quantita</th>
+            <th>Unita</th>
+            <th>Note</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in group["items"] %}
+          <tr>
+            <td>{{ item.nome or 'n/d' }}</td>
+            <td>{% if item.quantita and item.quantita > 0 %}{{ item.quantita }}{% else %}{{ item.quantita_raw or 'n/d'
+              }}{% endif %}</td>
+            <td>{{ item.unita or 'n/d' }}</td>
+            <td>{{ item.note or 'n/d' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endfor %}
+      {% endif %}
+    </section>
+
+    <div class="split">
+      <section class="card">
+        <h2>Varianti</h2>
+        <p class="muted">{{ ingredienti_varianti }}</p>
+      </section>
+      <section class="card">
+        <h2>Sicurezza</h2>
+        <p class="muted"><strong>Conservazione:</strong> {{ conservazione or 'n/d' }}</p>
+        <p class="muted"><strong>Note HACCP:</strong> {{ note_haccp or 'n/d' }}</p>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:18px;">
+      <h2>Allergeni e diete</h2>
+      <p class="muted"><strong>Allergeni:</strong> {{ allergeni_text or 'n/d' }}</p>
+      <p class="muted"><strong>Diete:</strong> {{ diete_text or 'n/d' }}</p>
+    </section>
+
+    <section class="card" style="margin-top:18px;">
+      <h2>Valori nutrizionali</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nutriente</th>
+            <th>Per 100 g</th>
+            <th>Per porzione</th>
+            <th>Per ricetta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Energia</td>
+            <td>{% if energia_100g > 0 %}{{ energia_100g }} kcal ({{ energia_100g_kj }} kJ){% else %}n/d{% endif %}</td>
+            <td>{% if energia_porzione > 0 %}{{ energia_porzione }} kcal ({{ energia_porzione_kj }} kJ){% else %}n/d{%
+              endif %}</td>
+            <td>{% if energia_ricetta > 0 %}{{ energia_ricetta }} kcal ({{ energia_ricetta_kj }} kJ){% else %}n/d{%
+              endif %}</td>
+          </tr>
+          <tr>
+            <td>Carboidrati</td>
+            <td>{{ carboidrati_100g if carboidrati_100g > 0 else 'n/d' }} g</td>
+            <td>{{ carboidrati_porzione if carboidrati_porzione > 0 else 'n/d' }} g</td>
+            <td>{{ carboidrati_ricetta if carboidrati_ricetta > 0 else 'n/d' }} g</td>
+          </tr>
+          <tr>
+            <td>Zuccheri</td>
+            <td>{{ zuccheri_100g if zuccheri_100g > 0 else 'n/d' }} g</td>
+            <td>{{ zuccheri_porzione if zuccheri_porzione > 0 else 'n/d' }} g</td>
+            <td>{{ zuccheri_ricetta if zuccheri_ricetta > 0 else 'n/d' }} g</td>
+          </tr>
+          <tr>
+            <td>Proteine</td>
+            <td>{{ proteine_100g if proteine_100g > 0 else 'n/d' }} g</td>
+            <td>{{ proteine_porzione if proteine_porzione > 0 else 'n/d' }} g</td>
+            <td>{{ proteine_ricetta if proteine_ricetta > 0 else 'n/d' }} g</td>
+          </tr>
+          <tr>
+            <td>Grassi totali</td>
+            <td>{{ grassi_totali_100g if grassi_totali_100g > 0 else 'n/d' }} g</td>
+            <td>{{ grassi_totali_porzione if grassi_totali_porzione > 0 else 'n/d' }} g</td>
+            <td>{{ grassi_totali_ricetta if grassi_totali_ricetta > 0 else 'n/d' }} g</td>
+          </tr>
+          <tr>
+            <td>Grassi saturi</td>
+            <td>{{ grassi_saturi_100g if grassi_saturi_100g > 0 else 'n/d' }} g</td>
+            <td>{{ grassi_saturi_porzione if grassi_saturi_porzione > 0 else 'n/d' }} g</td>
+            <td>{{ grassi_saturi_ricetta if grassi_saturi_ricetta > 0 else 'n/d' }} g</td>
+          </tr>
+          <tr>
+            <td>Grassi monoinsaturi</td>
+            <td>{{ grassi_monoinsaturi_100g if grassi_monoinsaturi_100g > 0 else 'n/d' }} g</td>
+            <td>{{ grassi_monoinsaturi_porzione if grassi_monoinsaturi_porzione > 0 else 'n/d' }} g</td>
+            <td>{{ grassi_monoinsaturi_ricetta if grassi_monoinsaturi_ricetta > 0 else 'n/d' }} g</td>
+          </tr>
+          <tr>
+            <td>Grassi polinsaturi</td>
+            <td>{{ grassi_polinsaturi_100g if grassi_polinsaturi_100g > 0 else 'n/d' }} g</td>
+            <td>{{ grassi_polinsaturi_porzione if grassi_polinsaturi_porzione > 0 else 'n/d' }} g</td>
+            <td>{{ grassi_polinsaturi_ricetta if grassi_polinsaturi_ricetta > 0 else 'n/d' }} g</td>
+          </tr>
+          <tr>
+            <td>Fibre</td>
+            <td>{{ fibre_100g if fibre_100g > 0 else 'n/d' }} g</td>
+            <td>{{ fibre_porzione if fibre_porzione > 0 else 'n/d' }} g</td>
+            <td>{{ fibre_ricetta if fibre_ricetta > 0 else 'n/d' }} g</td>
+          </tr>
+          <tr>
+            <td>Sodio</td>
+            <td>{{ sodio_100g_mg if sodio_100g_mg > 0 else 'n/d' }} mg</td>
+            <td>{{ sodio_porzione_mg if sodio_porzione_mg > 0 else 'n/d' }} mg</td>
+            <td>{{ sodio_ricetta_mg if sodio_ricetta_mg > 0 else 'n/d' }} mg</td>
+          </tr>
+          <tr>
+            <td>Colesterolo</td>
+            <td>{{ colesterolo_100g_mg if colesterolo_100g_mg > 0 else 'n/d' }} mg</td>
+            <td>{{ colesterolo_porzione_mg if colesterolo_porzione_mg > 0 else 'n/d' }} mg</td>
+            <td>{{ colesterolo_ricetta_mg if colesterolo_ricetta_mg > 0 else 'n/d' }} mg</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </div>
+
+
+  {% endif %}
+</body>
+
+</html>
+
