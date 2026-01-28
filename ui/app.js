@@ -2862,21 +2862,21 @@
     // Retry loop: attendi che l'API sia pronta
     while (retries < maxRetries && !res) {
       try {
-        const api = (window.pywebview && window.pywebview.api) ? window.pywebview.api : null;
-        log(`DEBUG: api=${api ? 'exists' : 'null'}`);
-        if (api && typeof api.get_templates === 'function') {
+        const pywebviewApi = (window.pywebview && window.pywebview.api) ? window.pywebview.api : null;
+        log(`DEBUG: pywebviewApi=${pywebviewApi ? 'exists' : 'null'}`);
+        if (pywebviewApi && typeof pywebviewApi.get_templates === 'function') {
           log('DEBUG: Usando PyWebView API');
           usedApi = true;
-          res = await api.get_templates();
+          res = await pywebviewApi.get_templates();
           log(`Template caricati: ${res ? (Array.isArray(res) ? res.length : res.templates?.length || 0) : 0}`);
           break;
-        } else if (api && typeof api.list_templates === 'function') {
+        } else if (pywebviewApi && typeof pywebviewApi.list_templates === 'function') {
           log('DEBUG: Usando PyWebView list_templates');
           usedApi = true;
-          res = await api.list_templates();
+          res = await pywebviewApi.list_templates();
           log(`Template caricati (list_templates): ${res ? (Array.isArray(res) ? res.length : res.templates?.length || 0) : 0}`);
           break;
-        } else if (!api) {
+        } else if (!pywebviewApi) {
           // Fallback to REST API for web/Vercel
           log('DEBUG: Fallback a REST API...');
           try {
