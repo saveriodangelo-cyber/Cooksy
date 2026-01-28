@@ -27,7 +27,13 @@ CORS(app, resources={r"/api/*": {"origins": "*"}})
 # Config
 app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024  # 500MB max upload
 app.config['JSON_SORT_KEYS'] = False
-UPLOAD_FOLDER = Path.home() / 'AppData' / 'Local' / 'Cooksy' / 'uploads'
+
+# Upload folder - compatibile con Windows e Linux
+if sys.platform == 'win32':
+    UPLOAD_FOLDER = Path.home() / 'AppData' / 'Local' / 'Cooksy' / 'uploads'
+else:
+    UPLOAD_FOLDER = Path('/tmp/cooksy_uploads')
+
 UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
 
 
@@ -126,8 +132,10 @@ def server_error(e):
     return jsonify({"ok": False, "error": "Internal server error"}), 500
 
 
-def run_api(host: str = '0.0.0.0', port: int = 5000, debug: bool = False) -> None:
+def run_api(host: str = '0.0.0.0', port: int = None, debug: bool = False) -> None:
     """Avvia API server."""
+    if port is None:
+        port = int(os.getenv('PORT', '5000'))
     logger.info(f"Starting Cooksy API on {host}:{port}")
     logger.info(f"Upload folder: {UPLOAD_FOLDER}")
     app.run(host=host, port=port, debug=debug, threaded=True)
