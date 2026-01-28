@@ -934,6 +934,24 @@
     return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
   }
 
+  // Normalize number format: convert comma to dot for input[type="number"]
+  function normalizeNumberValue(val) {
+    if (typeof val === 'string') {
+      return val.replace(',', '.');
+    }
+    return val;
+  }
+
+  // Set value on number input, handling locale differences
+  function setNumberInputValue(el, val) {
+    if (!el) return;
+    if (el.type === 'number') {
+      el.value = normalizeNumberValue(val);
+    } else {
+      el.value = val;
+    }
+  }
+
   function showToast(msg, type = 'info', timeoutMs = 3200) {
     if (!toastEl) return;
     toastEl.textContent = String(msg || '');
