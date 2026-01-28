@@ -876,25 +876,57 @@
   };
 
   function apiReady() {
-    return !!(window.pywebview && window.pywebview.api);
+    // Desktop app via PyWebView
+    if (window.pywebview && window.pywebview.api) return true;
+    // Web/Vercel via REST API
+    if (window.CooksyAPI) return true;
+    return false;
   }
 
   async function api(name, payload = {}) {
-    if (!apiReady()) throw new Error('API non pronta');
-    const fn = window.pywebview.api?.[name];
-    if (typeof fn !== 'function') throw new Error(`API ${name} non disponibile`);
+    if (!apiReady()) throw new Error('API non disponibile. Riavvia l\'app o reinstalla WebView2');
     const merged = { ...(payload || {}) };
     if (authState.token && !merged.token) merged.token = authState.token;
-    // SECURITY: Add CSRF token to all API calls
     merged._csrf = csrfToken;
-    const res = await fn(merged);
-    if (res && res.error && /sessione/i.test(String(res.error))) {
-      clearAuthState();
-      updateAuthUi();
-      log('Sessione scaduta, effettua di nuovo il login.');
-      showToast('Sessione scaduta, effettua di nuovo il login.', 'error');
+
+    // Try PyWebView first (desktop app)
+    if (window.pywebview && window.pywebview.api) {
+      const fn = window.pywebview.api?.[name];
+      if (typeof fn !== 'function') throw new Error(`API ${name} non disponibile`);
+      const res = await fn(merged);
+      if (res && res.error && /sessione/i.test(String(res.error))) {
+        clearAuthState();
+        updateAuthUi();
+        log('Sessione scaduta, effettua di nuovo il login.');
+        showToast('Sessione scaduta, effettua di nuovo il login.', 'error');
+      }
+      return res;
     }
-    return res;
+
+    // Fallback to REST API (web/Vercel)
+    if (window.CooksyAPI) {
+      const endpoint = `/api/${name}`;
+      const response = await fetch(`${window.CooksyAPI.baseURL}${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(merged),
+      });
+      if (!response.ok) {
+        throw new Error(`API error ${response.status}: ${response.statusText}`);
+      }
+      const res = await response.json();
+      if (res && res.error && /sessione/i.test(String(res.error))) {
+        clearAuthState();
+        updateAuthUi();
+        log('Sessione scaduta, effettua di nuovo il login.');
+        showToast('Sessione scaduta, effettua di nuovo il login.', 'error');
+      }
+      return res;
+    }
+
+    throw new Error('Nessun backend API disponibile');
   }
 
   function now() {
