@@ -1,0 +1,1328 @@
+<!doctype html>
+<html lang="it">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes" />
+  <!-- Content Security Policy -->
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <title>Cooksy</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logoDot" aria-hidden="true">
+          <img src="assets/cooksy_logo.png" alt="Cooksy" style="width:100%;height:100%;object-fit:contain"
+            onerror="this.style.display='none';" />
+        </div>
+        <div>
+          <div class="title">Cooksy</div>
+        </div>
+      </div>
+
+      <div class="statusPill" id="pillStatus">
+        <span class="pillLabel">Stato</span>
+        <span class="pillSpinner" id="pillSpinner" aria-hidden="true"></span>
+        <span class="pillValue" id="pillValue">Pronto</span>
+      </div>
+
+      <div class="zoomControls" id="zoomControls">
+        <button class="btn zoom-btn" id="btnZoomOut" title="Riduci (Ctrl+-)">−</button>
+        <span class="zoom-label" id="zoomLabel">100%</span>
+        <button class="btn zoom-btn" id="btnZoomIn" title="Ingrandisci (Ctrl++)">+</button>
+        <button class="btn zoom-btn" id="btnZoomReset" title="Reimposta">Reset</button>
+      </div>
+
+      <div class="authArea" id="authArea" aria-live="polite">
+        <div class="authUser" id="authUserLabel">Ospite</div>
+        <div class="authQuota" id="authQuotaLabel">Quota: -</div>
+        <div class="authSubscriptionExpiry" id="authSubscriptionExpiry"
+          style="display:none; font-size:0.85em; color:#888; margin-top:4px;">Scadenza: -</div>
+        <div class="authActions">
+          <button class="btn small" id="btnSubscription" style="display:none;" title="Gestisci abbonamento">💳
+            Abbonamento</button>
+          <button class="btn small" id="btnLogin">Accedi</button>
+          <button class="btn small" id="btnRegister">Registrati</button>
+          <button class="btn small" id="btnLogout" style="display:none;">Esci</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <div class="cardHeader">
+          <div class="cardTitle">Input</div>
+          <div class="cardHint">Immagini, PDF, Word, TXT</div>
+        </div>
+
+        <div class="row">
+          <button class="btn primary" id="btnPick">Seleziona file</button>
+          <button class="btn" id="btnPickFolder"
+            title="Seleziona una cartella e processa tutti i file in ordine">Seleziona cartella</button>
+          <button class="btn" id="btnClear" title="Svuota lista">Svuota</button>
+        </div>
+
+        <div class="block">
+          <div class="labelRow">
+            <div class="label">Batch cartella</div>
+            <div class="muted" id="folderLabel">Cartella: nessuna</div>
+          </div>
+          <div class="muted" id="batchCurrentFile">File corrente: -</div>
+          <div class="row">
+            <button class="btn primary" id="btnBatchStart" disabled>Analizza cartella</button>
+            <button class="btn" id="btnBatchOpenOut" title="Apri cartella output del batch" disabled>Apri
+              output</button>
+          </div>
+          <div class="row">
+            <label class="chk" title="Salta i file già elaborati in questa cartella">
+              <input type="checkbox" id="chkSkipProcessed" checked />
+              Salta file già elaborati
+            </label>
+            <select class="btn" id="selSkipMethod" title="Metodo di confronto per saltare i file">
+              <option value="hash">Confronto contenuto file (accurato)</option>
+              <option value="name">Confronto per nome (veloce)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="block">
+          <div class="labelRow">
+            <div class="label">Progresso</div>
+            <div class="muted" id="progText">
+              <span class="progSpinner" id="progSpinner" aria-hidden="true"></span>
+              <span id="progLabel">0% - Pronto</span>
+            </div>
+          </div>
+          <div class="progressWrap">
+            <div class="progressBar">
+              <div class="progressFill" id="progFill" style="width:0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="block">
+          <div class="labelRow">
+            <div class="label">File selezionati</div>
+            <div class="muted" id="filesCount">0</div>
+          </div>
+          <div class="fileList" id="fileList"></div>
+
+          <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(31, 41, 55, .1);">
+            <div class="muted" style="font-size: 12px; margin-bottom: 8px;">O incolla testo ricetta:</div>
+            <textarea id="pasteRecipeText" class="paste-recipe-area" spellcheck="false"
+              placeholder="Incolla il testo della ricetta qui... Verrà elaborato e sistemato automaticamente">
+            </textarea>
+            <button class="btn" id="btnPasteRecipe" style="margin-top: 8px; width: 100%;">
+              Elabora testo ricetta
+            </button>
+          </div>
+        </div>
+
+        <div class="block">
+          <div class="labelRow">
+            <div class="label">Esportazione</div>
+            <div class="muted" id="outDirLabel">Cartella: C:\Users\utente\Desktop\Elaborate</div>
+          </div>
+          <div class="row">
+            <button class="btn" id="btnOutDir">Scegli cartella</button>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <select class="btn" id="selTemplate" title="Template PDF"></select>
+              <small id="tplStatus" style="color:#6b7280;font-size:12px;"></small>
+            </div>
+            <select class="btn" id="selPageSize" title="Formato pagina">
+              <option value="A4" selected>A4</option>
+              <option value="A3">A3</option>
+              <option value="A5">A5</option>
+              <option value="A6">A6</option>
+              <option value="B5">B5</option>
+              <option value="LETTER">Letter (US)</option>
+              <option value="LEGAL">Legal (US)</option>
+              <option value="TABLOID">Tabloid (US)</option>
+              <option value="KDP_5x8">KDP 5x8</option>
+              <option value="KDP_5_5x8_5">KDP 5.5x8.5</option>
+              <option value="KDP_6x9">KDP 6x9</option>
+              <option value="KDP_7_5x9_25">KDP 7.5x9.25</option>
+              <option value="KDP_8_5x8_5">KDP 8.5x8.5</option>
+              <option value="KDP_8_5x11">KDP 8.5x11</option>
+            </select>
+            <button class="btn" id="btnTplPreview" title="Anteprima template (solo HTML)" disabled>Anteprima
+              template</button>
+            <button class="btn" id="btnAiSettings" title="Configura API Cloud AI (OpenAI/Gemini)">Impostazioni
+              AI</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <button class="btn primary" id="btnAnalyze" disabled>Analizza</button>
+          <button class="btn primary" id="btnExport" disabled>Esporta PDF</button>
+          <button class="btn" id="btnPrint" disabled>Stampa</button>
+        </div>
+
+
+
+        <div class="row">
+          <button class="btn" id="btnArchiveSave" disabled>Salva in archivio</button>
+          <button class="btn" id="btnArchiveOpen">Archivio</button>
+          <button class="btn" id="btnRecipeScale" title="Carica ricetta dal database e scala ingredienti">Carica e
+            Scala</button>
+        </div>
+
+        <div class="muted smallNote">
+          Nota: puoi modificare i campi nell’anteprima prima di esportare.
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <div class="cardTitle">Anteprima</div>
+          <div class="cardHint">Anteprima modificabile</div>
+        </div>
+
+        <div class="missingPanel" id="missingPanel" aria-live="polite" style="display:none;">
+          <div class="missingHeader">
+            <button class="btn small" id="btnMissingCopy" disabled>Copia elenco</button>
+          </div>
+          <div class="missingEmpty" id="missingEmpty"></div>
+          <ul class="missingList" id="missingList"></ul>
+        </div>
+
+        <div class="preview">
+          <!-- EDITOR VERO: SEMPRE EDITABILE -->
+          <input class="previewTitle" id="prevTitle" type="text" value=""
+            placeholder="Titolo ricetta (clicca per scrivere)" title="Titolo (modificabile)" spellcheck="false" />
+
+          <div class="metaRow" aria-label="Dati ricetta">
+            <div class="metaField">
+              <div class="metaLabel">Porzioni</div>
+              <input class="metaInput" id="prevMeta" type="text" value="" placeholder="Es. 4"
+                title="Porzioni (modificabile)" spellcheck="false" />
+            </div>
+
+            <div class="metaField">
+              <div class="metaLabel">Difficoltà</div>
+              <select class="metaInput" id="prevDifficulty" title="Difficoltà (modificabile)">
+                <option value="">n.d.</option>
+                <option value="bassa">Bassa</option>
+                <option value="media">Media</option>
+                <option value="alta">Alta</option>
+              </select>
+            </div>
+
+            <div class="metaField">
+              <div class="metaLabel">Prep (min)</div>
+              <input class="metaInput" id="prevPrepTime" type="number" min="0" step="1" value="" placeholder="n.d."
+                title="Tempo preparazione (minuti)" />
+            </div>
+
+            <div class="metaField">
+              <div class="metaLabel">Cottura (min)</div>
+              <input class="metaInput" id="prevCookTime" type="number" min="0" step="1" value="" placeholder="n.d."
+                title="Tempo cottura (minuti)" />
+
+            </div>
+
+            <div class="metaField">
+              <div class="metaLabel">Categoria</div>
+              <select class="metaInput" id="prevCategory" title="Categoria (modificabile)">
+                <option value="">n.d.</option>
+                <option value="Piatto unico">Piatto unico</option>
+                <option value="Antipasti">Antipasti</option>
+                <option value="Primi">Primi</option>
+                <option value="Secondi">Secondi</option>
+                <option value="Contorni">Contorni</option>
+                <option value="Dolci">Dolci</option>
+                <option value="Molecolare">Molecolare</option>
+                <option value="Pane e lievitati">Pane e lievitati</option>
+                <option value="Salse e condimenti">Salse e condimenti</option>
+                <option value="Bevande">Bevande</option>
+                <option value="Altro">Altro</option>
+              </select>
+            </div>
+
+          </div>
+
+
+          <div class="previewCols">
+            <div class="previewBox">
+              <div class="previewBoxTitle">Ingredienti</div>
+              <textarea class="previewBoxBody" id="prevIngredients" title="Ingredienti (modificabile)"
+                spellcheck="false"
+                style="width:100%;min-height:220px;resize:vertical;border:0;background:transparent;outline:none;pointer-events:auto;cursor:text;"></textarea>
+            </div>
+
+            <div class="previewBox">
+              <div class="previewBoxTitle">Procedimento</div>
+              <textarea class="previewBoxBody" id="prevSteps" title="Procedimento (modificabile)" spellcheck="false"
+                style="width:100%;min-height:220px;resize:vertical;border:0;background:transparent;outline:none;pointer-events:auto;cursor:text;"></textarea>
+            </div>
+          </div>
+
+
+          <div class="previewCols">
+            <div class="previewBox">
+              <div class="previewBoxTitle">Allergeni / Diete</div>
+
+              <div class="dietRow" aria-label="Diete">
+                <label class="chk"><input type="checkbox" id="dietVegetarian" /> Vegetariana</label>
+                <label class="chk"><input type="checkbox" id="dietVegan" /> Vegana</label>
+                <label class="chk"><input type="checkbox" id="dietGlutenFree" /> Senza glutine</label>
+                <label class="chk"><input type="checkbox" id="dietLactoseFree" /> Senza lattosio</label>
+              </div>
+
+              <div class="previewBoxBody" id="prevAllergens" contenteditable="true"
+                data-placeholder="Clicca per inserire allergeni e note (es. tracce)..."></div>
+            </div>
+
+            <div class="previewBox">
+              <div class="previewBoxTitle">Attrezzature</div>
+              <div class="previewBoxBody" id="prevEquipment" contenteditable="true"
+                data-placeholder="Clicca per elencare attrezzature (semplici/professionali)..."></div>
+            </div>
+          </div>
+
+
+
+          <div class="previewCols stackTables">
+            <div class="previewBox">
+              <div class="previewBoxTitle">Valori nutrizionali</div>
+              <div class="muted" style="margin:-4px 0 8px;">Valori descritti per grammi</div>
+              <table class="dataTable" id="tblNutrition" aria-label="Tabella valori nutrizionali">
+                <thead>
+                  <tr>
+                    <th>Valori nutrizionali</th>
+                    <th>Per 100 g</th>
+                    <th>Per l’intera ricetta</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr>
+                    <td class="dtLabel">Energia (kcal)</td>
+                    <td><input class="dtInput" id="nut_energia_100g" type="number" step="0.01" placeholder="" /></td>
+                    <td><input class="dtInput" id="nut_energia_totale" type="number" step="0.01" placeholder="" /></td>
+                  </tr>
+                  <tr>
+                    <td class="dtLabel">Carboidrati totali (g)</td>
+                    <td><input class="dtInput" id="nut_carboidrati_totali_100g" type="number" step="0.01"
+                        placeholder="" /></td>
+                    <td><input class="dtInput" id="nut_carboidrati_totali_totale" type="number" step="0.01"
+                        placeholder="" /></td>
+                  </tr>
+                  <tr>
+                    <td class="dtLabel">Di cui zuccheri (g)</td>
+                    <td><input class="dtInput" id="nut_di_cui_zuccheri_100g" type="number" step="0.01" placeholder="" />
+                    </td>
+                    <td><input class="dtInput" id="nut_di_cui_zuccheri_totale" type="number" step="0.01"
+                        placeholder="" /></td>
+                  </tr>
+                  <tr>
+                    <td class="dtLabel">Grassi totali (g)</td>
+                    <td><input class="dtInput" id="nut_grassi_totali_100g" type="number" step="0.01" placeholder="" />
+                    </td>
+                    <td><input class="dtInput" id="nut_grassi_totali_totale" type="number" step="0.01" placeholder="" />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="dtLabel">Di cui saturi (g)</td>
+                    <td><input class="dtInput" id="nut_di_cui_saturi_100g" type="number" step="0.01" placeholder="" />
+                    </td>
+                    <td><input class="dtInput" id="nut_di_cui_saturi_totale" type="number" step="0.01" placeholder="" />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="dtLabel">Monoinsaturi (g)</td>
+                    <td><input class="dtInput" id="nut_monoinsaturi_100g" type="number" step="0.01" placeholder="" />
+                    </td>
+                    <td><input class="dtInput" id="nut_monoinsaturi_totale" type="number" step="0.01" placeholder="" />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="dtLabel">Polinsaturi (g)</td>
+                    <td><input class="dtInput" id="nut_polinsaturi_100g" type="number" step="0.01" placeholder="" />
+                    </td>
+                    <td><input class="dtInput" id="nut_polinsaturi_totale" type="number" step="0.01" placeholder="" />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="dtLabel">Proteine totali (g)</td>
+                    <td><input class="dtInput" id="nut_proteine_totali_100g" type="number" step="0.01" placeholder="" />
+                    </td>
+                    <td><input class="dtInput" id="nut_proteine_totali_totale" type="number" step="0.01"
+                        placeholder="" /></td>
+                  </tr>
+                  <tr>
+                    <td class="dtLabel">Colesterolo totale (mg)</td>
+                    <td><input class="dtInput" id="nut_colesterolo_totale_100g" type="number" step="0.01"
+                        placeholder="" /></td>
+                    <td><input class="dtInput" id="nut_colesterolo_totale_totale" type="number" step="0.01"
+                        placeholder="" /></td>
+                  </tr>
+                  <tr>
+                    <td class="dtLabel">Fibre (g)</td>
+                    <td><input class="dtInput" id="nut_fibre_100g" type="number" step="0.01" placeholder="" /></td>
+                    <td><input class="dtInput" id="nut_fibre_totale" type="number" step="0.01" placeholder="" /></td>
+                  </tr>
+                  <tr>
+                    <td class="dtLabel">Sodio (mg)</td>
+                    <td><input class="dtInput" id="nut_sodio_100g" type="number" step="0.01" placeholder="" /></td>
+                    <td><input class="dtInput" id="nut_sodio_totale" type="number" step="0.01" placeholder="" /></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="previewBox">
+              <div class="previewBoxTitle">Food cost</div>
+
+              <div class="row" style="margin:0 0 8px; gap:12px; align-items:center;">
+                <div class="label" style="font-size:13px;">Prezzo del piatto (€)</div>
+                <input class="dtInput" id="costDishPrice" type="number" step="0.01" min="0" placeholder=""
+                  style="max-width:140px;" />
+              </div>
+
+              <table class="dataTable" id="tblCost" aria-label="Tabella food cost">
+                <thead>
+                  <tr>
+                    <th>Ingrediente</th>
+                    <th>Scarto %</th>
+                    <th>Peso minimo d'acquisto</th>
+                    <th>Prezzo per kg o per unita (€)</th>
+                    <th>Quantità utilizzata nella ricetta</th>
+                    <th>Prezzo dell'alimento acquistato (€)</th>
+                    <th>Prezzo calcolato per la quantità utilizzata (€)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><input class="dtInput" id="p1_ingrediente" type="text" spellcheck="false" value="Spaghetti" />
+                    </td>
+                    <td><input class="dtInput" id="p1_scarto" type="text" spellcheck="false" value="0%" /></td>
+                    <td><input class="dtInput" id="p1_peso_min_acquisto" type="text" spellcheck="false" value="1 kg" />
+                    </td>
+                    <td><input class="dtInput" id="p1_prezzo_kg_ud" type="text" spellcheck="false" value="2,40 €" />
+                    </td>
+                    <td><input class="dtInput" id="p1_quantita_usata" type="text" spellcheck="false" value="320 g" />
+                    </td>
+                    <td>
+                      <div class="price-input-wrapper"><input class="dtInput" id="p1_prezzo_alimento_acquisto"
+                          type="text" spellcheck="false" value="2,40" /><span class="currency-symbol">€</span></div>
+                    </td>
+                    <td>
+                      <div class="price-input-wrapper"><input class="dtInput" id="p1_prezzo_calcolato" type="text"
+                          spellcheck="false" value="0,77" /><span class="currency-symbol">€</span></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input class="dtInput" id="p2_ingrediente" type="text" spellcheck="false" value="Pomodori" />
+                    </td>
+                    <td><input class="dtInput" id="p2_scarto" type="text" spellcheck="false" value="0%" /></td>
+                    <td><input class="dtInput" id="p2_peso_min_acquisto" type="text" spellcheck="false" value="800 g" />
+                    </td>
+                    <td><input class="dtInput" id="p2_prezzo_kg_ud" type="text" spellcheck="false" value="1,80 €" />
+                    </td>
+                    <td><input class="dtInput" id="p2_quantita_usata" type="text" spellcheck="false" value="400 g" />
+                    </td>
+                    <td>
+                      <div class="price-input-wrapper"><input class="dtInput" id="p2_prezzo_alimento_acquisto"
+                          type="text" spellcheck="false" value="1,80" /><span class="currency-symbol">€</span></div>
+                    </td>
+                    <td>
+                      <div class="price-input-wrapper"><input class="dtInput" id="p2_prezzo_calcolato" type="text"
+                          spellcheck="false" value="0,90" /><span class="currency-symbol">€</span></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input class="dtInput" id="p3_ingrediente" type="text" spellcheck="false"
+                        value="Olio extravergine" /></td>
+                    <td><input class="dtInput" id="p3_scarto" type="text" spellcheck="false" value="0%" /></td>
+                    <td><input class="dtInput" id="p3_peso_min_acquisto" type="text" spellcheck="false" value="1 l" />
+                    </td>
+                    <td><input class="dtInput" id="p3_prezzo_kg_ud" type="text" spellcheck="false" value="8,50 €/l" />
+                    </td>
+                    <td><input class="dtInput" id="p3_quantita_usata" type="text" spellcheck="false" value="40 ml" />
+                    </td>
+                    <td>
+                      <div class="price-input-wrapper"><input class="dtInput" id="p3_prezzo_alimento_acquisto"
+                          type="text" spellcheck="false" value="8,50" /><span class="currency-symbol">€</span></div>
+                    </td>
+                    <td>
+                      <div class="price-input-wrapper"><input class="dtInput" id="p3_prezzo_calcolato" type="text"
+                          spellcheck="false" value="0,34" /><span class="currency-symbol">€</span></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input class="dtInput" id="p4_ingrediente" type="text" spellcheck="false" value="Aglio" /></td>
+                    <td><input class="dtInput" id="p4_scarto" type="text" spellcheck="false" value="5%" /></td>
+                    <td><input class="dtInput" id="p4_peso_min_acquisto" type="text" spellcheck="false" value="200 g" />
+                    </td>
+                    <td><input class="dtInput" id="p4_prezzo_kg_ud" type="text" spellcheck="false" value="4,00 €" />
+                    </td>
+                    <td><input class="dtInput" id="p4_quantita_usata" type="text" spellcheck="false" value="10 g" />
+                    </td>
+                    <td>
+                      <div class="price-input-wrapper"><input class="dtInput" id="p4_prezzo_alimento_acquisto"
+                          type="text" spellcheck="false" value="4,00" /><span class="currency-symbol">€</span></div>
+                    </td>
+                    <td>
+                      <div class="price-input-wrapper"><input class="dtInput" id="p4_prezzo_calcolato" type="text"
+                          spellcheck="false" value="0,04" /><span class="currency-symbol">€</span></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input class="dtInput" id="p5_ingrediente" type="text" spellcheck="false" value="Basilico" />
+                    </td>
+                    <td><input class="dtInput" id="p5_scarto" type="text" spellcheck="false" value="0%" /></td>
+                    <td><input class="dtInput" id="p5_peso_min_acquisto" type="text" spellcheck="false" value="50 g" />
+                    </td>
+                    <td><input class="dtInput" id="p5_prezzo_kg_ud" type="text" spellcheck="false" value="12,00 €" />
+                    </td>
+                    <td><input class="dtInput" id="p5_quantita_usata" type="text" spellcheck="false" value="10 g" />
+                    </td>
+                    <td>
+                      <div class="price-input-wrapper"><input class="dtInput" id="p5_prezzo_alimento_acquisto"
+                          type="text" spellcheck="false" value="12,00" /><span class="currency-symbol">€</span></div>
+                    </td>
+                    <td>
+                      <div class="price-input-wrapper"><input class="dtInput" id="p5_prezzo_calcolato" type="text"
+                          spellcheck="false" value="0,12" /><span class="currency-symbol">€</span></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input class="dtInput" id="p6_ingrediente" type="text" spellcheck="false" /></td>
+                    <td><input class="dtInput" id="p6_scarto" type="text" spellcheck="false" /></td>
+                    <td><input class="dtInput" id="p6_peso_min_acquisto" type="text" spellcheck="false" /></td>
+                    <td><input class="dtInput" id="p6_prezzo_kg_ud" type="text" spellcheck="false" /></td>
+                    <td><input class="dtInput" id="p6_quantita_usata" type="text" spellcheck="false" /></td>
+                    <td>
+                      <div class="price-input-wrapper"><input class="dtInput" id="p6_prezzo_alimento_acquisto"
+                          type="text" spellcheck="false" /><span class="currency-symbol">€</span></div>
+                    </td>
+                    <td>
+                      <div class="price-input-wrapper"><input class="dtInput" id="p6_prezzo_calcolato" type="text"
+                          spellcheck="false" /><span class="currency-symbol">€</span></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input class="dtInput" id="p7_ingrediente" type="text" spellcheck="false" /></td>
+                    <td><input class="dtInput" id="p7_scarto" type="text" spellcheck="false" /></td>
+                    <td><input class="dtInput" id="p7_peso_min_acquisto" type="text" spellcheck="false" /></td>
+                    <td><input class="dtInput" id="p7_prezzo_kg_ud" type="text" spellcheck="false" /></td>
+                    <td><input class="dtInput" id="p7_quantita_usata" type="text" spellcheck="false" /></td>
+                    <td>
+                      <div class="price-input-wrapper"><input class="dtInput" id="p7_prezzo_alimento_acquisto"
+                          type="text" spellcheck="false" /><span class="currency-symbol">€</span></div>
+                    </td>
+                    <td>
+                      <div class="price-input-wrapper"><input class="dtInput" id="p7_prezzo_calcolato" type="text"
+                          spellcheck="false" /><span class="currency-symbol">€</span></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input class="dtInput" id="p8_ingrediente" type="text" spellcheck="false" /></td>
+                    <td><input class="dtInput" id="p8_scarto" type="text" spellcheck="false" /></td>
+                    <td><input class="dtInput" id="p8_peso_min_acquisto" type="text" spellcheck="false" /></td>
+                    <td><input class="dtInput" id="p8_prezzo_kg_ud" type="text" spellcheck="false" /></td>
+                    <td><input class="dtInput" id="p8_quantita_usata" type="text" spellcheck="false" /></td>
+                    <td>
+                      <div class="price-input-wrapper"><input class="dtInput" id="p8_prezzo_alimento_acquisto"
+                          type="text" spellcheck="false" /><span class="currency-symbol">€</span></div>
+                    </td>
+                    <td>
+                      <div class="price-input-wrapper"><input class="dtInput" id="p8_prezzo_calcolato" type="text"
+                          spellcheck="false" /><span class="currency-symbol">€</span></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input class="dtInput" id="p9_ingrediente" type="text" spellcheck="false" /></td>
+                    <td><input class="dtInput" id="p9_scarto" type="text" spellcheck="false" /></td>
+                    <td><input class="dtInput" id="p9_peso_min_acquisto" type="text" spellcheck="false" /></td>
+                    <td><input class="dtInput" id="p9_prezzo_kg_ud" type="text" spellcheck="false" /></td>
+                    <td><input class="dtInput" id="p9_quantita_usata" type="text" spellcheck="false" /></td>
+                    <td>
+                      <div class="price-input-wrapper"><input class="dtInput" id="p9_prezzo_alimento_acquisto"
+                          type="text" spellcheck="false" /><span class="currency-symbol">€</span></div>
+                    </td>
+                    <td>
+                      <div class="price-input-wrapper"><input class="dtInput" id="p9_prezzo_calcolato" type="text"
+                          spellcheck="false" /><span class="currency-symbol">€</span></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input class="dtInput" id="p10_ingrediente" type="text" spellcheck="false" /></td>
+                    <td><input class="dtInput" id="p10_scarto" type="text" spellcheck="false" /></td>
+                    <td><input class="dtInput" id="p10_peso_min_acquisto" type="text" spellcheck="false" /></td>
+                    <td><input class="dtInput" id="p10_prezzo_kg_ud" type="text" spellcheck="false" /></td>
+                    <td><input class="dtInput" id="p10_quantita_usata" type="text" spellcheck="false" /></td>
+                    <td>
+                      <div class="price-input-wrapper"><input class="dtInput" id="p10_prezzo_alimento_acquisto"
+                          type="text" spellcheck="false" /><span class="currency-symbol">€</span></div>
+                    </td>
+                    <td>
+                      <div class="price-input-wrapper"><input class="dtInput" id="p10_prezzo_calcolato" type="text"
+                          spellcheck="false" /><span class="currency-symbol">€</span></div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <button class="btn-secondary" id="btnAddIngredientRow" type="button"
+                style="margin-top: 8px; width: 100%;">
+                + Aggiungi ingrediente
+              </button>
+              <div class="costSummary">
+                <div class="costSummaryRow">
+                  <div class="costSummaryLabel">Spesa totale per acquisto ingredienti</div>
+                  <div class="costSummaryValue" id="costTotalAcquisto">-</div>
+                </div>
+                <div class="costSummaryRow">
+                  <div class="costSummaryLabel">Spesa totale effettiva della ricetta</div>
+                  <div class="costSummaryValue" id="costTotalRicetta">-</div>
+                </div>
+                <div class="costSummaryRow">
+                  <div class="costSummaryLabel">Spesa per singola porzione</div>
+                  <div class="costSummaryValue" id="costPerPorzione">-</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="previewCols">
+            <div class="previewBox">
+              <div class="previewBoxTitle">Note</div>
+              <div class="previewBoxBody" id="prevCostKcal" contenteditable="true"
+                data-placeholder="Clicca per inserire note aggiuntive (facoltative)..."></div>
+            </div>
+            <div class="previewBox">
+              <div class="previewBoxTitle">Vino abbinato</div>
+              <div class="previewBoxBody" id="prevWine" contenteditable="true"
+                data-placeholder="Clicca per inserire vino abbinato..."></div>
+              <div class="wineMetaGrid">
+                <div class="metaField">
+                  <div class="metaLabel">Temperatura servizio</div>
+                  <input class="metaInput" id="prevWineTemp" type="text" placeholder="10-12" spellcheck="false" />
+                </div>
+                <div class="metaField">
+                  <div class="metaLabel">Regione</div>
+                  <input class="metaInput" id="prevWineRegion" type="text" placeholder="Es. Piemonte"
+                    spellcheck="false" />
+                </div>
+                <div class="metaField">
+                  <div class="metaLabel">Annata</div>
+                  <input class="metaInput" id="prevWineVintage" type="text" placeholder="Es. 2019" spellcheck="false" />
+                </div>
+                <div class="metaField" style="grid-column: 1 / -1;">
+                  <div class="metaLabel">Motivo annata</div>
+                  <input class="metaInput" id="prevWineVintageNote" type="text" placeholder="Perché l'annata è adatta"
+                    spellcheck="false" />
+                </div>
+              </div>
+            </div>
+
+            <div class="previewBox">
+              <div class="previewBoxTitle">Stagionalità</div>
+              <div class="previewBoxBody" id="prevSeason" contenteditable="true"
+                data-placeholder="Clicca per inserire stagionalità..."></div>
+            </div>
+          </div>
+        </div>
+  </div>
+  </section>
+
+  </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- MODAL: Anteprima Template HTML -->
+  <div class="modal hidden" id="tplModal" aria-hidden="true">
+    <div class="modalBackdrop" id="tplModalBackdrop"></div>
+    <div class="modalPanel" role="dialog" aria-modal="true" aria-label="Anteprima template">
+      <div class="modalHeader">
+        <div class="modalTitle" id="tplModalTitle">Anteprima template</div>
+        <div class="modalActions">
+          <div class="tplZoomGroup" aria-label="Zoom anteprima">
+            <button class="btn" id="btnTplZoomOut" title="Zoom -">-</button>
+            <span class="tplZoomLabel" id="tplZoomLabel">100%</span>
+            <button class="btn" id="btnTplZoomIn" title="Zoom +">+</button>
+            <button class="btn" id="btnTplZoomReset" title="Zoom 100%">Reset</button>
+          </div>
+          <button class="btn" id="btnTplRefresh">Aggiorna</button>
+          <button class="btn primary" id="btnTplClose">Chiudi</button>
+        </div>
+      </div>
+      <div class="tplPreviewWrap">
+        <div class="tplPreviewMeta">
+          <div class="tplPreviewLabel" id="tplPreviewLabel">A4 • 210×297 mm • margini 15 mm</div>
+          <div class="tplPreviewScale" id="tplPreviewScale">Scala 100% (rif. A4)</div>
+        </div>
+        <div class="tplPreviewStage" id="tplPreviewStage" aria-label="Foglio anteprima">
+          <div class="tplPreviewSheet" id="tplPreviewSheet">
+            <div class="tplPreviewSheetInner" id="tplPreviewSheetInner">
+              <div class="tplPreviewMargins" id="tplPreviewMargins" aria-hidden="true"></div>
+              <iframe class="modalFrame tplPreviewFrameScaled" id="tplFrame" title="Anteprima template HTML"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal anteprima template HTML -->
+  <div id="tplPreviewModal" class="tplPreviewModal" style="display:none;">
+    <div class="tplPreviewBackdrop" id="tplPreviewBackdrop"></div>
+    <div class="tplPreviewCard" role="dialog" aria-modal="true" aria-label="Anteprima template">
+      <div class="tplPreviewHeader">
+        <div class="tplPreviewTitle" id="tplPreviewTitle">Anteprima template</div>
+        <div class="tplPreviewActions">
+          <button class="btn" id="btnTplPreviewRefresh" title="Aggiorna anteprima">Aggiorna</button>
+          <button class="btn" id="btnTplPreviewOpen" title="Apri in finestra esterna">Apri</button>
+          <button class="btn" id="btnTplPreviewClose" title="Chiudi anteprima">Chiudi</button>
+        </div>
+      </div>
+      <iframe id="tplPreviewFrame" title="Anteprima template" class="tplPreviewFrame"></iframe>
+    </div>
+  </div>
+
+
+
+  <!-- MODAL: Carica e Scala Ricetta da Archivio -->
+  <div class="modal hidden" id="recipeScaleModal" aria-hidden="true">
+    <div class="modalBackdrop" id="recipeScaleBackdrop"></div>
+    <div class="modalPanel" role="dialog" aria-modal="true" aria-label="Carica e scala ricetta">
+      <div class="modalHeader">
+        <div class="modalTitle">Carica e Scala Ricetta</div>
+        <div class="modalActions">
+          <button class="btn" id="btnScaleClose">Chiudi</button>
+        </div>
+      </div>
+      <div class="modalBody">
+        <div class="scaleForm">
+          <!-- Caricamento ricetta -->
+          <div class="formSection">
+            <label class="label">Carica ricetta dal database</label>
+            <div class="row">
+              <input class="metaInput" id="scaleRecipeId" type="number" min="1" placeholder="ID ricetta..." />
+              <button class="btn" id="btnScaleLoadRecipe">Carica</button>
+            </div>
+            <div id="scaleLoadStatus" class="statusMsg" style="display:none;"></div>
+          </div>
+
+          <!-- Info ricetta caricata -->
+          <div class="formSection" id="scaleRecipeInfo" style="display:none;">
+            <div class="scaleCard">
+              <div class="cardTitle" id="scaleRecipeTitle"></div>
+              <div class="cardMeta">
+                <span>Porzioni: <strong id="scaleOriginalServings"></strong></span>
+                <span>Ingredienti: <strong id="scaleIngredientsCount"></strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Opzioni scaling -->
+          <div class="formSection" id="scaleOptions" style="display:none;">
+            <label class="label">Scala ricetta</label>
+
+            <div class="scaleTypeSelection">
+              <label class="chk">
+                <input type="radio" name="scaleType" value="porzioni" checked />
+                Per porzioni
+              </label>
+              <label class="chk">
+                <input type="radio" name="scaleType" value="fattore" />
+                Per fattore moltiplicativo
+              </label>
+              <label class="chk">
+                <input type="radio" name="scaleType" value="peso" />
+                Per peso totale
+              </label>
+            </div>
+
+            <!-- Opzione Porzioni -->
+            <div class="scaleOption" id="scalePortionOpt">
+              <div class="row">
+                <label class="label">Nuove porzioni:</label>
+                <input class="metaInput" id="scaleTargetServings" type="number" min="1" step="0.5"
+                  placeholder="Es. 8" />
+                <button class="btn primary" id="btnScaleApply">Scala</button>
+              </div>
+            </div>
+
+            <!-- Opzione Fattore -->
+            <div class="scaleOption" id="scaleFactorOpt" style="display:none;">
+              <div class="row">
+                <label class="label">Fattore moltiplicativo:</label>
+                <input class="metaInput" id="scaleFactorValue" type="number" min="0.1" step="0.1" placeholder="Es. 2.5"
+                  value="1" />
+                <button class="btn primary" id="btnScaleApply">Scala</button>
+              </div>
+            </div>
+
+            <!-- Opzione Peso -->
+            <div class="scaleOption" id="scaleWeightOpt" style="display:none;">
+              <div class="row">
+                <label class="label">Peso totale target (g):</label>
+                <input class="metaInput" id="scaleTargetWeight" type="number" min="100" step="100"
+                  placeholder="Es. 5000" />
+                <button class="btn primary" id="btnScaleApply">Scala</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ingredienti scalati -->
+          <div class="formSection" id="scaleResults" style="display:none;">
+            <label class="label">Ingredienti scalati</label>
+            <div id="scaleResultsTable" class="ingredientsList"></div>
+            <div style="margin-top: 12px; gap: 8px; display: flex;">
+              <button class="btn" id="btnScaleCopyText">Copia testo</button>
+              <button class="btn" id="btnScaleExport">Esporta come PDF</button>
+              <button class="btn" id="btnScaleSaveArchive">Salva in archivio</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- MODAL: Archivio ricette (database locale) -->
+  <div class="modal hidden" id="archiveModal" aria-hidden="true">
+    <div class="modalBackdrop" id="archiveModalBackdrop"></div>
+    <div class="modalPanel" role="dialog" aria-modal="true" aria-label="Archivio ricette">
+      <div class="modalHeader">
+        <div class="modalTitle" id="archiveModalTitle">Archivio ricette</div>
+        <div class="modalActions">
+          <button class="btn iconBtn" id="btnArchiveFiltersToggle" title="Mostra/Nascondi filtri"
+            aria-label="Mostra/Nascondi filtri">
+            <span class="iconFilter" aria-hidden="true"></span>
+          </button>
+          <button class="btn" id="btnArchiveExport" title="Esporta le ricette selezionate">Esporta selezionate</button>
+          <button class="btn" id="btnArchiveDelete" title="Elimina le ricette selezionate">Elimina</button>
+          <button class="btn primary" id="btnArchiveClose">Chiudi</button>
+        </div>
+      </div>
+      <div class="archiveBody">
+        <div class="archiveFiltersWrap archiveFiltersPanel is-hidden" id="archiveFiltersPanel">
+          <details class="archiveSection" open>
+            <summary>Ricerca</summary>
+            <div class="archiveSectionBody">
+              <div class="archiveFilters">
+                <input class="metaInput" id="archQuery" type="text" placeholder="Cerca per titolo o testo..."
+                  spellcheck="false" />
+                <input class="metaInput" id="archIngredient" type="text" placeholder="Ingrediente (es. zucchero)..."
+                  spellcheck="false" />
+                <select class="metaInput" id="archCategory" title="Categoria">
+                  <option value="">Tutte le categorie</option>
+                  <option value="Piatto unico">Piatto unico</option>
+                  <option value="Antipasti">Antipasti</option>
+                  <option value="Primi">Primi</option>
+                  <option value="Secondi">Secondi</option>
+                  <option value="Contorni">Contorni</option>
+                  <option value="Dolci">Dolci</option>
+                  <option value="Molecolare">Molecolare</option>
+                  <option value="Pane e lievitati">Pane e lievitati</option>
+                  <option value="Salse e condimenti">Salse e condimenti</option>
+                  <option value="Bevande">Bevande</option>
+                  <option value="Altro">Altro</option>
+                </select>
+                <label class="chk">
+                  <input type="checkbox" id="archMissingOnly" /> Solo ricette con campi mancanti
+                </label>
+                <input class="metaInput" id="archMissingField" type="text"
+                  placeholder="Campo mancante (anche più, separati da virgola)" spellcheck="false" />
+                <button class="btn" id="btnArchiveSearch">Cerca</button>
+              </div>
+            </div>
+          </details>
+
+          <details class="archiveSection" open>
+            <summary>Diete e allergeni</summary>
+            <div class="archiveSectionBody">
+              <div class="archiveFilters">
+                <div class="dietRow" aria-label="Filtri dieta">
+                  <label class="chk"><input type="checkbox" id="archDietVegetarian" /> Vegetariana</label>
+                  <label class="chk"><input type="checkbox" id="archDietVegan" /> Vegana</label>
+                  <label class="chk"><input type="checkbox" id="archDietGlutenFree" /> Senza glutine</label>
+                  <label class="chk"><input type="checkbox" id="archDietLactoseFree" /> Senza lattosio</label>
+                </div>
+                <input class="metaInput" id="archExcludeAllergens" type="text"
+                  placeholder="Escludi allergeni (es. latte,uova)..." spellcheck="false" />
+              </div>
+            </div>
+          </details>
+
+          <details class="archiveSection" open>
+            <summary>Meta ricetta</summary>
+            <div class="archiveSectionBody">
+              <div class="archiveFilters">
+                <select class="metaInput" id="archDifficulty" title="Difficoltà">
+                  <option value="">Difficoltà (tutte)</option>
+                  <option value="bassa">Bassa</option>
+                  <option value="media">Media</option>
+                  <option value="alta">Alta</option>
+                </select>
+                <input class="metaInput rangeInput" id="archServingsMin" type="number" min="0"
+                  placeholder="Porzioni min" />
+                <input class="metaInput rangeInput" id="archServingsMax" type="number" min="0"
+                  placeholder="Porzioni max" />
+                <input class="metaInput" id="archSeasonality" type="text" placeholder="Stagionalità (testo)..."
+                  spellcheck="false" />
+              </div>
+            </div>
+          </details>
+
+          <details class="archiveSection">
+            <summary>Tempi</summary>
+            <div class="archiveSectionBody">
+              <div class="archiveFilters compact">
+                <input class="metaInput rangeInput" id="archPrepMin" type="number" min="0"
+                  placeholder="Prep min (min)" />
+                <input class="metaInput rangeInput" id="archPrepMax" type="number" min="0"
+                  placeholder="Prep max (min)" />
+                <input class="metaInput rangeInput" id="archCookMin" type="number" min="0"
+                  placeholder="Cottura min (min)" />
+                <input class="metaInput rangeInput" id="archCookMax" type="number" min="0"
+                  placeholder="Cottura max (min)" />
+                <input class="metaInput rangeInput" id="archTotalMin" type="number" min="0"
+                  placeholder="Totale min (min)" />
+                <input class="metaInput rangeInput" id="archTotalMax" type="number" min="0"
+                  placeholder="Totale max (min)" />
+              </div>
+            </div>
+          </details>
+
+          <details class="archiveSection">
+            <summary>Energia e costi</summary>
+            <div class="archiveSectionBody">
+              <div class="archiveFilters compact">
+                <input class="metaInput rangeInput" id="archKcal100Min" type="number" min="0"
+                  placeholder="Kcal/100g min" />
+                <input class="metaInput rangeInput" id="archKcal100Max" type="number" min="0"
+                  placeholder="Kcal/100g max" />
+                <input class="metaInput rangeInput" id="archKcalTotMin" type="number" min="0"
+                  placeholder="Kcal ricetta min" />
+                <input class="metaInput rangeInput" id="archKcalTotMax" type="number" min="0"
+                  placeholder="Kcal ricetta max" />
+                <input class="metaInput rangeInput" id="archCostMin" type="number" min="0" step="0.01"
+                  placeholder="Costo porzione min" />
+                <input class="metaInput rangeInput" id="archCostMax" type="number" min="0" step="0.01"
+                  placeholder="Costo porzione max" />
+              </div>
+            </div>
+          </details>
+
+          <details class="archiveSection">
+            <summary>Macronutrienti 100g</summary>
+            <div class="archiveSectionBody">
+              <div class="archiveFilters compact">
+                <input class="metaInput rangeInput" id="archProtein100Min" type="number" min="0" step="0.1"
+                  placeholder="Proteine/100g min" />
+                <input class="metaInput rangeInput" id="archProtein100Max" type="number" min="0" step="0.1"
+                  placeholder="Proteine/100g max" />
+                <input class="metaInput rangeInput" id="archFat100Min" type="number" min="0" step="0.1"
+                  placeholder="Grassi/100g min" />
+                <input class="metaInput rangeInput" id="archFat100Max" type="number" min="0" step="0.1"
+                  placeholder="Grassi/100g max" />
+                <input class="metaInput rangeInput" id="archFiber100Min" type="number" min="0" step="0.1"
+                  placeholder="Fibre/100g min" />
+                <input class="metaInput rangeInput" id="archFiber100Max" type="number" min="0" step="0.1"
+                  placeholder="Fibre/100g max" />
+                <input class="metaInput rangeInput" id="archCarb100Min" type="number" min="0" step="0.1"
+                  placeholder="Carboidrati/100g min" />
+                <input class="metaInput rangeInput" id="archCarb100Max" type="number" min="0" step="0.1"
+                  placeholder="Carboidrati/100g max" />
+                <input class="metaInput rangeInput" id="archSugar100Min" type="number" min="0" step="0.1"
+                  placeholder="Zuccheri/100g min" />
+                <input class="metaInput rangeInput" id="archSugar100Max" type="number" min="0" step="0.1"
+                  placeholder="Zuccheri/100g max" />
+              </div>
+            </div>
+          </details>
+
+          <details class="archiveSection">
+            <summary>Macronutrienti ricetta</summary>
+            <div class="archiveSectionBody">
+              <div class="archiveFilters compact">
+                <input class="metaInput rangeInput" id="archProteinTotMin" type="number" min="0" step="0.1"
+                  placeholder="Proteine ricetta min" />
+                <input class="metaInput rangeInput" id="archProteinTotMax" type="number" min="0" step="0.1"
+                  placeholder="Proteine ricetta max" />
+                <input class="metaInput rangeInput" id="archFatTotMin" type="number" min="0" step="0.1"
+                  placeholder="Grassi ricetta min" />
+                <input class="metaInput rangeInput" id="archFatTotMax" type="number" min="0" step="0.1"
+                  placeholder="Grassi ricetta max" />
+                <input class="metaInput rangeInput" id="archFiberTotMin" type="number" min="0" step="0.1"
+                  placeholder="Fibre ricetta min" />
+                <input class="metaInput rangeInput" id="archFiberTotMax" type="number" min="0" step="0.1"
+                  placeholder="Fibre ricetta max" />
+                <input class="metaInput rangeInput" id="archCarbTotMin" type="number" min="0" step="0.1"
+                  placeholder="Carboidrati ricetta min" />
+                <input class="metaInput rangeInput" id="archCarbTotMax" type="number" min="0" step="0.1"
+                  placeholder="Carboidrati ricetta max" />
+                <input class="metaInput rangeInput" id="archSugarTotMin" type="number" min="0" step="0.1"
+                  placeholder="Zuccheri ricetta min" />
+                <input class="metaInput rangeInput" id="archSugarTotMax" type="number" min="0" step="0.1"
+                  placeholder="Zuccheri ricetta max" />
+                <input class="metaInput rangeInput" id="archCostTotalMin" type="number" min="0" step="0.01"
+                  placeholder="Costo ricetta min" />
+                <input class="metaInput rangeInput" id="archCostTotalMax" type="number" min="0" step="0.01"
+                  placeholder="Costo ricetta max" />
+              </div>
+            </div>
+          </details>
+
+          <details class="archiveSection">
+            <summary>Grassi 100g</summary>
+            <div class="archiveSectionBody">
+              <div class="archiveFilters compact">
+                <input class="metaInput rangeInput" id="archSat100Min" type="number" min="0" step="0.1"
+                  placeholder="Saturi/100g min" />
+                <input class="metaInput rangeInput" id="archSat100Max" type="number" min="0" step="0.1"
+                  placeholder="Saturi/100g max" />
+                <input class="metaInput rangeInput" id="archMono100Min" type="number" min="0" step="0.1"
+                  placeholder="Monoinsaturi/100g min" />
+                <input class="metaInput rangeInput" id="archMono100Max" type="number" min="0" step="0.1"
+                  placeholder="Monoinsaturi/100g max" />
+                <input class="metaInput rangeInput" id="archPoly100Min" type="number" min="0" step="0.1"
+                  placeholder="Polinsaturi/100g min" />
+                <input class="metaInput rangeInput" id="archPoly100Max" type="number" min="0" step="0.1"
+                  placeholder="Polinsaturi/100g max" />
+                <input class="metaInput rangeInput" id="archChol100Min" type="number" min="0" step="0.1"
+                  placeholder="Colesterolo/100g (mg) min" />
+                <input class="metaInput rangeInput" id="archChol100Max" type="number" min="0" step="0.1"
+                  placeholder="Colesterolo/100g (mg) max" />
+              </div>
+            </div>
+          </details>
+
+          <details class="archiveSection">
+            <summary>Grassi ricetta</summary>
+            <div class="archiveSectionBody">
+              <div class="archiveFilters compact">
+                <input class="metaInput rangeInput" id="archSatTotMin" type="number" min="0" step="0.1"
+                  placeholder="Saturi ricetta min" />
+                <input class="metaInput rangeInput" id="archSatTotMax" type="number" min="0" step="0.1"
+                  placeholder="Saturi ricetta max" />
+                <input class="metaInput rangeInput" id="archMonoTotMin" type="number" min="0" step="0.1"
+                  placeholder="Monoinsaturi ricetta min" />
+                <input class="metaInput rangeInput" id="archMonoTotMax" type="number" min="0" step="0.1"
+                  placeholder="Monoinsaturi ricetta max" />
+                <input class="metaInput rangeInput" id="archPolyTotMin" type="number" min="0" step="0.1"
+                  placeholder="Polinsaturi ricetta min" />
+                <input class="metaInput rangeInput" id="archPolyTotMax" type="number" min="0" step="0.1"
+                  placeholder="Polinsaturi ricetta max" />
+                <input class="metaInput rangeInput" id="archCholTotMin" type="number" min="0" step="0.1"
+                  placeholder="Colesterolo ricetta (mg) min" />
+                <input class="metaInput rangeInput" id="archCholTotMax" type="number" min="0" step="0.1"
+                  placeholder="Colesterolo ricetta (mg) max" />
+              </div>
+            </div>
+          </details>
+
+          <details class="archiveSection">
+            <summary>Sodio/Sale</summary>
+            <div class="archiveSectionBody">
+              <div class="archiveFilters compact">
+                <input class="metaInput rangeInput" id="archSodium100Min" type="number" min="0" step="0.1"
+                  placeholder="Sodio/Sale 100g (mg) min" />
+                <input class="metaInput rangeInput" id="archSodium100Max" type="number" min="0" step="0.1"
+                  placeholder="Sodio/Sale 100g (mg) max" />
+                <input class="metaInput rangeInput" id="archSodiumTotMin" type="number" min="0" step="0.1"
+                  placeholder="Sodio/Sale ricetta (mg) min" />
+                <input class="metaInput rangeInput" id="archSodiumTotMax" type="number" min="0" step="0.1"
+                  placeholder="Sodio/Sale ricetta (mg) max" />
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <div class="archiveHint muted" id="archStatus">0 risultati</div>
+
+        <div class="archiveListWrap">
+          <table class="dataTable" id="archTable" aria-label="Lista ricette archivio">
+            <thead>
+              <tr>
+                <th style="width:38px;"><input type="checkbox" id="archSelAll" title="Seleziona tutto" /></th>
+                <th>Titolo</th>
+                <th style="width:100px;">Categoria</th>
+                <th style="width:80px;">Difficoltà</th>
+                <th style="width:60px;">Porzioni</th>
+                <th style="width:70px;">Tempo</th>
+                <th style="width:80px;">Energie</th>
+                <th style="width:80px;">Costo/porz.</th>
+                <th style="width:130px;">Aggiornato</th>
+                <th style="width:80px;">Azione</th>
+              </tr>
+            </thead>
+            <tbody id="archTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- MODAL: Impostazioni Cloud AI (OpenAI/Gemini) -->
+  <div class="modal hidden" id="aiModal" aria-hidden="true">
+    <div class="modalBackdrop" id="aiModalBackdrop"></div>
+    <div class="modalPanel aiPanel" role="dialog" aria-modal="true" aria-label="Impostazioni AI">
+      <div class="modalHeader">
+        <div class="modalTitle">Impostazioni AI (Cloud)</div>
+        <div class="modalActions">
+          <button class="btn" id="btnAiTest" title="Testa la connessione (usa una chiamata minimale)">Test</button>
+          <button class="btn primary" id="btnAiSave" title="Salva impostazioni">Salva</button>
+          <button class="btn" id="btnAiClose" title="Chiudi">Chiudi</button>
+        </div>
+      </div>
+      <div class="aiBody">
+        <div class="aiRow">
+          <label class="aiLabel"><input type="checkbox" id="aiEnabled"> Abilita Cloud AI (completamento
+            automatico)</label>
+        </div>
+        <div class="aiRow">
+          <label class="aiLabel">Provider</label>
+          <select id="aiProvider" class="input">
+            <option value="auto">Auto (usa la prima chiave disponibile)</option>
+            <option value="openai">OpenAI</option>
+            <option value="gemini">Gemini</option>
+            <option value="offline">Solo dati interni (offline)</option>
+          </select>
+        </div>
+
+        <div class="aiGrid">
+          <div class="aiBox">
+            <div class="aiBoxTitle">OpenAI</div>
+            <div class="aiRow">
+              <label class="aiLabel">API Key</label>
+              <input type="password" id="openaiKey" class="input" placeholder="Incolla la tua OpenAI API key"
+                autocomplete="off" />
+              <div class="aiHint aiKeyHint" id="openaiKeyHint"></div>
+            </div>
+            <div class="aiRow">
+              <label class="aiLabel">Model</label>
+              <select id="openaiModel" class="input">
+                <option value="gpt-4.1-mini">gpt-4.1-mini (veloce)</option>
+                <option value="gpt-4.1">gpt-4.1</option>
+                <option value="gpt-4o-mini">gpt-4o-mini</option>
+                <option value="gpt-4o">gpt-4o</option>
+                <option value="gpt-5.2">gpt-5.2</option>
+                <option value="gpt-5.1">gpt-5.1</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="aiBox">
+            <div class="aiBoxTitle">Gemini</div>
+            <div class="aiRow">
+              <label class="aiLabel">API Key</label>
+              <input type="password" id="geminiKey" class="input" placeholder="Incolla la tua Gemini API key"
+                autocomplete="off" />
+              <div class="aiHint aiKeyHint" id="geminiKeyHint"></div>
+            </div>
+            <div class="aiRow">
+              <label class="aiLabel">Model</label>
+              <select id="geminiModel" class="input">
+                <option value="gemini-1.5-flash">gemini-1.5-flash</option>
+                <option value="gemini-1.5-pro">gemini-1.5-pro</option>
+                <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+                <option value="gemini-2.0-pro">gemini-2.0-pro</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="aiNote" id="aiNote">
+          Aggiungi le tue credenziali Cloud AI per funzioni avanzate.
+        </div>
+        <div class="aiStatus" id="aiStatus"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Login / Registrazione -->
+  <div class="modal auth hidden" id="authModal" aria-hidden="true">
+    <div class="modalBackdrop" id="authModalBackdrop"></div>
+    <div class="modalPanel" role="dialog" aria-modal="true" aria-label="Accesso utente">
+      <div class="modalHeader">
+        <div class="modalTitle" id="authModalTitle">Accesso</div>
+        <div class="modalActions">
+          <button class="btn" id="btnAuthClose">Chiudi</button>
+        </div>
+      </div>
+      <div class="modalBody">
+        <div class="authForm">
+          <!-- STEP 1: Password Registration -->
+          <div id="authStep1" class="authStep">
+            <label class="label" for="authEmail">Email</label>
+            <input class="metaInput" id="authEmail" type="email" placeholder="email@example.com" spellcheck="false" />
+
+            <label class="label" for="authPassword">Password</label>
+            <input class="metaInput" id="authPassword" type="password" placeholder="Password" />
+
+            <div id="authUsernameField" style="display:none;">
+              <label class="label" for="authUsername">Username (solo registrazione)</label>
+              <input class="metaInput" id="authUsername" type="text" placeholder="Nome visibile" spellcheck="false" />
+            </div>
+
+            <div class="row" style="margin-top:14px;">
+              <button class="btn primary" id="btnAuthLogin">Accedi</button>
+              <button class="btn" id="btnAuthRegister">Registrati</button>
+            </div>
+
+            <div class="authHint">I dati restano sul tuo dispositivo.</div>
+
+            <!-- 2FA Method Selection for Registration -->
+            <div id="auth2faMethodSel" class="hidden"
+              style="margin-top:18px; padding:12px; background:rgba(154,215,255,0.05); border-radius:8px;">
+              <label class="label">Scegli metodo 2FA:</label>
+              <div style="display:flex; gap:12px; margin-top:8px;">
+                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                  <input type="radio" name="twofa_method" value="email" checked style="cursor:pointer;" />
+                  <span>📧 Email</span>
+                </label>
+                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                  <input type="radio" name="twofa_method" value="sms" style="cursor:pointer;" />
+                  <span>📱 SMS</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 2: OTP Verification (Email or SMS) -->
+          <div id="authStep2" class="authStep hidden">
+            <div id="authStep2Header" class="authHint" style="margin-bottom:12px;">📧 Verifica il tuo email</div>
+            <label class="label" for="authOtpCode">Codice OTP (6 cifre)</label>
+            <input class="metaInput" id="authOtpCode" type="text" placeholder="000000" maxlength="6"
+              inputmode="numeric" />
+
+            <div class="row" style="margin-top:14px;">
+              <button class="btn primary" id="btnOtpVerify">Verifica OTP</button>
+              <button class="btn" id="btnOtpCancel">Annulla</button>
+            </div>
+
+            <div class="authHint" style="font-size:0.85em;">
+              Abbiamo inviato un codice al tuo email. Controlla spam se non lo vedi.
+            </div>
+          </div>
+
+          <!-- STEP 3: Passkey Enrollment (Mandatory) -->
+          <div id="authStep3" class="authStep hidden">
+            <div class="authHint" style="margin-bottom:12px;">🔐 Registra una Passkey (obbligatoria)</div>
+            <div style="margin-bottom:12px; padding:12px; background:#2a2a2a; border-radius:8px; font-size:0.9em;">
+              Per completare la registrazione, registra una passkey usando impronta digitale, Face ID o una chiave
+              hardware.
+            </div>
+
+            <div class="row" style="margin-top:14px;">
+              <button class="btn primary" id="btnPasskeyRegisterStart">Registra Passkey</button>
+              <button class="btn" id="btnOtpCancelPasskey">Salta (disabilita account)</button>
+            </div>
+
+            <div class="authHint" style="font-size:0.85em;">
+              Le passkey sono più sicure delle password e permettono accesso rapido.
+            </div>
+          </div>
+
+          <!-- Passkey / WebAuthn Login -->
+          <div class="authPasskeySection" style="margin-top:24px;padding-top:16px;border-top:1px solid #3a3a3a;">
+            <div class="authHint" style="margin-bottom:8px;">🔐 Autenticazione con Passkey</div>
+            <div class="row">
+              <button class="btn" id="btnAuthPasskeyLogin">Accedi con Passkey</button>
+            </div>
+            <div class="authHint" style="font-size:0.85em;margin-top:6px;">
+              Se hai registrato una passkey, usala per accedere in modo sicuro.
+            </div>
+          </div>
+
+          <div class="authStatus" id="authStatus"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Subscription Modal -->
+  <div class="modal auth hidden" id="subscriptionModal" aria-hidden="true">
+    <div class="modalBackdrop" id="subscriptionBackdrop"></div>
+    <div class="modalPanel" role="dialog" aria-modal="true" aria-label="Abbonamento">
+      <div class="modalHeader">
+        <div class="modalTitle">💳 Il Mio Abbonamento</div>
+        <div class="modalActions">
+          <button class="btn" id="btnSubscriptionClose">Chiudi</button>
+        </div>
+      </div>
+      <div class="modalBody">
+        <div class="subscriptionContainer">
+          <!-- Piano Attuale -->
+          <div class="subscriptionSection">
+            <h3>Piano Attuale</h3>
+            <div class="tierCard" id="currentTierCard">
+              <div class="tierName" id="tierName">Free</div>
+              <div class="tierPrice" id="tierPrice">Gratuito</div>
+              <div class="tierFeatures">
+                <div class="feature" id="tierFeature">3 ricette/mese</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quota Mensile -->
+          <div class="subscriptionSection">
+            <h3>Utilizzo Mensile</h3>
+            <div class="quotaBox">
+              <div class="quotaLabel">
+                <span id="quotaUsed">-</span> / <span id="quotaLimit">-</span> ricette
+              </div>
+              <div class="quotaBar">
+                <div class="quotaFill" id="quotaFill" style="width: 0%"></div>
+              </div>
+              <div class="quotaPercent" id="quotaPercent">Caricamento...</div>
+            </div>
+          </div>
+
+          <!-- Upgrade Tier -->
+          <div class="subscriptionSection">
+            <h3>Upgrade Piano</h3>
+            <div class="tierOptions">
+              <div class="tierOption">
+                <div class="tierOptionName">Free</div>
+                <div class="tierOptionPrice">Gratuito</div>
+                <div class="tierOptionDesc">3 ricette/mese</div>
+                <button class="btn" id="btnTierFree">Attuale</button>
+              </div>
+              <div class="tierOption">
+                <div class="tierOptionName">Pro</div>
+                <div class="tierOptionPrice">€9.99/mese</div>
+                <div class="tierOptionDesc">100 ricette/mese</div>
+                <button class="btn primary" id="btnTierPro">Upgrade</button>
+              </div>
+              <div class="tierOption">
+                <div class="tierOptionName">Business</div>
+                <div class="tierOptionPrice">€29.99/mese</div>
+                <div class="tierOptionDesc">500 ricette/mese</div>
+                <button class="btn" id="btnTierBusiness">Upgrade</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Azioni -->
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- MODAL: Termini e Condizioni (primo avvio) -->
+  <!-- RIMOSSO: La richiesta di accettazione Termini e Condizioni all'avvio è stata eliminata su richiesta. -->
+
+  <script src="app.js"></script>
+  <script src="subscription_ui.js"></script>
+
+</body>
+
+</html>
