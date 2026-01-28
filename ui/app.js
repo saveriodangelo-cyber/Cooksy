@@ -2839,30 +2839,38 @@
     let retries = 0;
     const maxRetries = 3;
 
+    log('DEBUG: Avvio loadTemplates...');
+
     // Retry loop: attendi che l'API sia pronta
     while (retries < maxRetries && !res) {
       try {
         const api = (window.pywebview && window.pywebview.api) ? window.pywebview.api : null;
+        log(`DEBUG: api=${api ? 'exists' : 'null'}`);
         if (api && typeof api.get_templates === 'function') {
+          log('DEBUG: Usando PyWebView API');
           usedApi = true;
           res = await api.get_templates();
           log(`Template caricati: ${res ? (Array.isArray(res) ? res.length : res.templates?.length || 0) : 0}`);
           break;
         } else if (api && typeof api.list_templates === 'function') {
+          log('DEBUG: Usando PyWebView list_templates');
           usedApi = true;
           res = await api.list_templates();
           log(`Template caricati (list_templates): ${res ? (Array.isArray(res) ? res.length : res.templates?.length || 0) : 0}`);
           break;
         } else if (!api) {
           // Fallback to REST API for web/Vercel
+          log('DEBUG: Fallback a REST API...');
           try {
             res = await api('get_templates');
             log(`Template caricati (REST API): ${res ? (Array.isArray(res) ? res.length : res.templates?.length || 0) : 0}`);
+            log(`DEBUG: Risposta REST: ${JSON.stringify(res).substring(0, 100)}`);
             break;
           } catch (restErr) {
             log(`Errore REST API template: ${restErr.message || restErr}`);
             retries++;
             if (retries < maxRetries) {
+              log(`DEBUG: Retry ${retries}/${maxRetries} tra 500ms...`);
               await new Promise(resolve => setTimeout(resolve, 500));
             } else {
               log('API template non pronta; uso template di default');
