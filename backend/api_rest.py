@@ -111,6 +111,39 @@ def api_status():
     }), 200
 
 
+# Generic API endpoint for method calls like api('get_templates')
+@app.route('/api/<method>', methods=['POST'])
+def api_method(method):
+    """Generic API endpoint for method calls."""
+    try:
+        # Map method names to functions
+        if method == 'get_templates':
+            templates_dir = Path(__file__).parent.parent / 'templates'
+            templates = []
+            
+            if templates_dir.exists():
+                for html_file in sorted(templates_dir.glob('*.html')):
+                    if not html_file.name.startswith('_'):
+                        template_id = html_file.stem
+                        templates.append({
+                            "id": template_id,
+                            "name": template_id.replace('_', ' ').title(),
+                            "file": html_file.name
+                        })
+            
+            return jsonify({
+                "ok": True,
+                "templates": templates,
+                "count": len(templates)
+            }), 200
+        
+        # Unknown method
+        return jsonify({"ok": False, "error": f"Unknown method: {method}"}), 400
+    except Exception as e:
+        logger.error(f"API method {method} error: {e}")
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
 def __get_disk_free_gb():
     """Ritorna spazio libero su disco in GB."""
     try:
