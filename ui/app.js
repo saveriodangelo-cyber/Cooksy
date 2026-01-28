@@ -875,13 +875,15 @@
     lastLogMsg: null,
   };
 
+  // Detect if running as web app or desktop app
+  const isWebApp = () => window.location.protocol === 'https:' || window.location.protocol === 'http:';
+  const isDesktopApp = () => !!window.pywebview;
+
   function apiReady() {
-    // Desktop app via PyWebView
-    if (window.pywebview && window.pywebview.api) return true;
-    // Web/Vercel via REST API - check if we can reach Railway
-    if (window.CooksyAPI && window.CooksyAPI.baseURL) return true;
-    // As fallback, if on web (not in PyWebView), assume REST API is available
-    if (!window.pywebview) return true;
+    // If web app, REST API is always ready
+    if (isWebApp()) return true;
+    // If desktop app, check PyWebView
+    if (isDesktopApp()) return window.pywebview && window.pywebview.api;
     return false;
   }
 
@@ -891,21 +893,22 @@
     if (authState.token && !merged.token) merged.token = authState.token;
     merged._csrf = csrfToken;
 
-    // Try PyWebView first (desktop app)
-    if (window.pywebview && window.pywebview.api) {
+    // Try PyWebView first (desktop app only)
+    if (isDesktopApp()) {
       const fn = window.pywebview.api?.[name];
-      if (typeof fn !== 'function') throw new Error(`API ${name} non disponibile`);
-      const res = await fn(merged);
-      if (res && res.error && /sessione/i.test(String(res.error))) {
-        clearAuthState();
-        updateAuthUi();
-        log('Sessione scaduta, effettua di nuovo il login.');
-        showToast('Sessione scaduta, effettua di nuovo il login.', 'error');
+      if (typeof fn === 'function') {
+        const res = await fn(merged);
+        if (res && res.error && /sessione/i.test(String(res.error))) {
+          clearAuthState();
+          updateAuthUi();
+          log('Sessione scaduta, effettua di nuovo il login.');
+          showToast('Sessione scaduta, effettua di nuovo il login.', 'error');
+        }
+        return res;
       }
-      return res;
     }
 
-    // Fallback to REST API (web/Vercel)
+    // Use REST API (web app or fallback)
     const apiBase = (window.CooksyAPI && window.CooksyAPI.baseURL) || 'https://cooksy-finaly.up.railway.app';
     const endpoint = `/api/${name}`;
     const response = await fetch(`${apiBase}${endpoint}`, {
