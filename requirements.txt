@@ -1,0 +1,54 @@
+# FILE: requirements.txt
+
+# -----------------------------
+# Core (app)
+# -----------------------------
+Pillow==10.4.0  # CVE fixes: pinned version
+pywebview==6.1  # Latest stable version with fixed file dialog
+python-docx>=1.1.0,<2.0
+docxtpl>=0.16.7,<1.0
+python-dotenv>=1.0.0,<2.0
+
+# REST API (Flask)
+Flask>=3.0.0,<4.0
+Flask-CORS>=4.0.0,<5.0
+
+# -----------------------------
+# PDF export
+# -----------------------------
+reportlab>=4.0,<5
+pypdf>=4.3.1,<5  # CVE-2024 patches
+docx>=0.2.4,<1.0
+# -----------------------------
+# LLM locale (OPZIONALE)
+# Nota: richiede Ollama installato sul PC (non via pip).
+# Questo è solo il client Python.
+# -----------------------------
+ollama>=0.6.1,<1
+
+# -----------------------------
+# OCR engines (OPZIONALI)
+# Installa solo quelli che vuoi usare. Nessuno è obbligatorio.
+# -----------------------------
+
+# Tesseract wrapper (richiede anche l'eseguibile Tesseract installato sul PC)
+pytesseract>=0.3.10,<1.0
+
+# EasyOCR (pesante; usa torch; può usare GPU se disponibile)
+easyocr>=1.7.1,<2.0
+
+# PaddleOCR (può scaricare modelli al primo avvio; GPU solo se installi paddlepaddle-gpu)
+paddleocr>=2.7.0,<3.0
+
+# RapidOCR: scegli UNA delle due righe sotto (consigliato ONNXRuntime)
+rapidocr-onnxruntime>=1.4.0,<2.0
+# rapidocr>=3.0.0,<4.0
+
+# Template HTML (render)
+jinja2>=3.1,<4.0
+
+# Stripe for payments
+stripe>=7.0.0,<8.0
+
+# FIDO2 for WebAuthn (SECURITY: necessario per verificare passkey)
+fido2>=1.1.0,<2.0

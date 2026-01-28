@@ -1,0 +1,90 @@
+[pdf_export] Found 32 templates at C:\Users\saver\OneDrive\Progetti\ricetta\templates
+[pdf_export] Found 32 templates at C:\Users\saver\OneDrive\Progetti\ricetta\templates
+
+============================================================
+COOKSY - TEST END-TO-END COMPLETO
+============================================================
+Verifica tutte le funzionalit├á per l'utente finale
+
+
+[TEST 1] Registrazione Utente
+------------------------------------------------------------
+  Ô£ô Registrazione: testuser_62771
+
+[TEST 2] Login Utente
+------------------------------------------------------------
+  Ô£ô Login effettuato: testuser_62771
+  Ô£ô   User ID: 58f156513093cbf1e6ff4871
+
+[TEST 3] Profilo Utente
+------------------------------------------------------------
+  Ô£ô Profilo caricato
+  Ô£ô   Username: testuser_62771
+  Ô£ô   Tier: ?
+
+[TEST 4] Quota Disponibile
+------------------------------------------------------------
+  Ô£ù Quota inattesa: 0/0 (atteso: 3, 300 o 1000)
+
+[TEST 5] Selezione Template
+------------------------------------------------------------
+  Ô£ô Template disponibile: Template_Ricetta_AI
+
+[TEST 6] Anteprima Template
+------------------------------------------------------------
+[DEBUG] SVG sostituiti: 1
+[DEBUG] SVG sostituiti: 1
+  Ô£ô Anteprima HTML generata (2961697 chars)
+
+[TEST 7] Analisi File Singolo
+------------------------------------------------------------
+[Cooksy][DEBUG] ocr=None | chars=0 | ingredienti=6 | step=6 | porzioni=4 | titolo=tmpumsaflgf
+  Ô£ô File analizzato con successo
+  Ô£ô   Ricetta estratta: 38 campi
+
+[TEST 8] Avvio Batch Analysis
+------------------------------------------------------------
+  Ô£ô Batch avviato in: C:\Users\saver\OneDrive\Desktop\Elaborate
+
+[TEST 9] Status Batch Processing
+------------------------------------------------------------
+  Ô£ô Status: running=False
+
+[TEST 10] Selezione Cartella Output
+------------------------------------------------------------
+  Ô£ù Selezione cartella fallita
+
+[TEST 11] Export PDF
+------------------------------------------------------------
+  Ô£ô PDF generato: ?
+
+[TEST 12] Export DOCX
+------------------------------------------------------------
+  Ô£ô DOCX generato: ?
+
+[TEST 13] Salva in Archivio
+------------------------------------------------------------
+  Ô£ô Ricetta salvata in archivio
+
+[TEST 14] Lista Archivio
+------------------------------------------------------------
+  Ô£ô Ricette archiviate: 0
+
+[TEST 15] Upgrade Subscription (Stripe)
+------------------------------------------------------------
+  Ô£ù Checkout fallito: Errore richiesta: Request req_XChdcp6eUB6Bam: No such price: 'price_1SsS0X3f2EVGM1KhQrwvFwMZ'
+
+[TEST 16] Session Management
+------------------------------------------------------------
+  Ô£ô Sessione attiva
+  Ô£ô   User: testuser_62771
+
+============================================================
+RIEPILOGO FINALE
+============================================================
+
+Ô£ô Test passati: 18
+Ô£ù Test falliti: 3
+Percentuale: 85.7%
+
+ÔÜá´©Å  3 funzionalit├á con problemi - Controlla gli errori

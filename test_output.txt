@@ -1,0 +1,86 @@
+[pdf_export] Found 32 templates at C:\Users\saver\OneDrive\Progetti\ricetta\templates
+[pdf_export] Found 32 templates at C:\Users\saver\OneDrive\Progetti\ricetta\templates
+
+============================================================
+COOKSY - TEST END-TO-END COMPLETO
+============================================================
+Verifica tutte le funzionalit├á per l'utente finale
+
+
+[TEST 1] Registrazione Utente
+------------------------------------------------------------
+  Ô£ô Registrazione: testuser_29664
+
+[TEST 2] Login Utente
+------------------------------------------------------------
+  Ô£ô Login API disponibile
+
+[TEST 3] Profilo Utente
+------------------------------------------------------------
+  Ô£ù Profilo non disponibile (normal se non loggati)
+
+[TEST 4] Quota Disponibile
+------------------------------------------------------------
+  Ô£ù Quota inattesa: 0/0 (atteso: 3, 300 o 1000)
+
+[TEST 5] Selezione Template
+------------------------------------------------------------
+  Ô£ô Template disponibile: Template_Ricetta_AI
+
+[TEST 6] Anteprima Template
+------------------------------------------------------------
+[DEBUG] SVG sostituiti: 1
+[DEBUG] SVG sostituiti: 1
+  Ô£ô Anteprima HTML generata (2961697 chars)
+
+[TEST 7] Analisi File Singolo
+------------------------------------------------------------
+[Cooksy][DEBUG] ocr=None | chars=0 | ingredienti=6 | step=7 | porzioni=4 | titolo=tmpgtb0uv p
+  Ô£ô File analizzato con successo
+  Ô£ô   Ricetta estratta: 38 campi
+
+[TEST 8] Avvio Batch Analysis
+------------------------------------------------------------
+  Ô£ô Batch avviato in: C:\Users\saver\OneDrive\Desktop\Elaborate
+
+[TEST 9] Status Batch Processing
+------------------------------------------------------------
+  Ô£ô Status: running=False
+
+[TEST 10] Selezione Cartella Output
+------------------------------------------------------------
+  Ô£ù Selezione cartella fallita
+
+[TEST 11] Export PDF
+------------------------------------------------------------
+  Ô£ô PDF generato: ?
+
+[TEST 12] Export DOCX
+------------------------------------------------------------
+  Ô£ô DOCX generato: ?
+
+[TEST 13] Salva in Archivio
+------------------------------------------------------------
+  Ô£ô Ricetta salvata in archivio
+
+[TEST 14] Lista Archivio
+------------------------------------------------------------
+  Ô£ô Ricette archiviate: 0
+
+[TEST 15] Upgrade Subscription (Stripe)
+------------------------------------------------------------
+  Ô£ù Checkout fallito: Utente non autenticato
+
+[TEST 16] Session Management
+------------------------------------------------------------
+  Ô£ù Check sessione fallito
+
+============================================================
+RIEPILOGO FINALE
+============================================================
+
+Ô£ô Test passati: 12
+Ô£ù Test falliti: 5
+Percentuale: 70.6%
+
+ÔÜá´©Å  5 funzionalit├á con problemi - Controlla gli errori
