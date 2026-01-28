@@ -2,17 +2,11 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Dipendenze di sistema
-RUN apt-get update && apt-get install -y \
-    tesseract-ocr \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Copy solo requirements leggeri per API
+COPY requirements-api.txt .
 
-# Copy requirements
-COPY requirements.txt .
-
-# Installa dipendenze Python
-RUN pip install --no-cache-dir -r requirements.txt
+# Installa dipendenze Python minime
+RUN pip install --no-cache-dir -r requirements-api.txt
 
 # Copy applicazione
 COPY . .
