@@ -1,7 +1,6 @@
 {
     "buildCommand": "echo 'Building Cooksy PWA'",
     "outputDirectory": "ui",
-    "framework": "static",
     "env": {
         "API_BASE_URL": "https://cooksy-finaly.up.railway.app"
     },
