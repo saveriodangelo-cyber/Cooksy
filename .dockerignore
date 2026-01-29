@@ -1,0 +1,18 @@
+# Ignora requirements.txt principale (usa solo requirements-api.txt)
+requirements.txt
+# Build artifacts
+dist/
+build/
+*.pyc
+__pycache__/
+.venv/
+.env
+.env.local
+*.key
+# Data e config locali
+data/config/*key*
+data/config/*secret*
+data/recipes/
+# Test files
+test_*.py
+_test_*.py
