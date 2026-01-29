@@ -34,6 +34,16 @@ except Exception as e:
     user_manager = None
     _user_manager_available = False
 
+# Import bridge for generic method calls
+try:
+    from backend.bridge import Bridge
+    _bridge = Bridge()
+    _bridge_available = True
+except Exception as e:
+    logger.warning(f"Bridge not available: {e}")
+    _bridge = None
+    _bridge_available = False
+
 # Config
 app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024  # 500MB max upload
 app.config['JSON_SORT_KEYS'] = False
@@ -326,33 +336,41 @@ def auth_me():
 # Generic API endpoint for method calls like api('get_templates')
 @app.route('/api/<method>', methods=['POST'])
 def api_method(method):
-    """Generic API endpoint for method calls."""
+    """
+    Generic API endpoint - Delega tutte le chiamate al Bridge.
+    Supporta tutti i metodi: get_templates, analyze_recipe_text, recipe_load, 
+    recipe_scale, export_pdf, archive_save, passkey_*, otp_*, ecc.
+    """
+    if not _bridge_available or not _bridge:
+        return jsonify({"ok": False, "error": "Bridge service not available"}), 503
+    
     try:
-        # Map method names to functions
-        if method == 'get_templates':
-            templates_dir = Path(__file__).parent.parent / 'templates'
-            templates = []
-            
-            if templates_dir.exists():
-                for html_file in sorted(templates_dir.glob('*.html')):
-                    if not html_file.name.startswith('_'):
-                        template_id = html_file.stem
-                        templates.append({
-                            "id": template_id,
-                            "name": template_id.replace('_', ' ').title(),
-                            "file": html_file.name
-                        })
-            
-            return jsonify({
-                "ok": True,
-                "templates": templates,
-                "count": len(templates)
-            }), 200
+        # Get payload from request
+        payload = request.get_json() or {}
         
-        # Unknown method
-        return jsonify({"ok": False, "error": f"Unknown method: {method}"}), 400
+        # Get Authorization header for token-based auth
+        auth_header = request.headers.get('Authorization', '')
+        if auth_header.startswith('Bearer '):
+            token = auth_header.replace('Bearer ', '').strip()
+            if token and 'token' not in payload:
+                payload['token'] = token
+        
+        # Check if bridge has this method
+        if not hasattr(_bridge, method):
+            return jsonify({"ok": False, "error": f"Unknown method: {method}"}), 400
+        
+        # Call the bridge method
+        bridge_method = getattr(_bridge, method)
+        result = bridge_method(payload)
+        
+        # Ensure result is a dict
+        if not isinstance(result, dict):
+            result = {"ok": True, "result": result}
+        
+        return jsonify(result), 200
+        
     except Exception as e:
-        logger.error(f"API method {method} error: {e}")
+        logger.error(f"API method {method} error: {e}", exc_info=True)
         return jsonify({"ok": False, "error": str(e)}), 500
 
 

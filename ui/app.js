@@ -3193,18 +3193,29 @@
           log(`Init: loadTemplates fallita: ${e.message || e}`);
         }
         if (selPageSize) selPageSize.value = 'A4';
+        
+        // Auth check (works for both web and desktop)
         if (apiReady()) {
           try {
             await authMe();
-            const res = await window.pywebview.api.get_default_output_dir();
-            if (res && res.ok && res.path) {
-              state.outDir = res.path;
-              if (outDirLabel) outDirLabel.textContent = `Cartella: ${shortPath(res.path)}`;
+          } catch (e) {
+            log(`Auth check failed: ${e.message || e}`);
+          }
+          
+          // SOLO per desktop app: carica cartella output default
+          if (isDesktopApp() && window.pywebview && window.pywebview.api && window.pywebview.api.get_default_output_dir) {
+            try {
+              const res = await window.pywebview.api.get_default_output_dir();
+              if (res && res.ok && res.path) {
+                state.outDir = res.path;
+                if (outDirLabel) outDirLabel.textContent = `Cartella: ${shortPath(res.path)}`;
+              }
+            } catch (e) {
+              log(`Output dir loading failed: ${e.message || e}`);
             }
-          } catch (_) {
-            // ignore
           }
         }
+        
         if (outDirLabel && !state.outDir) {
           outDirLabel.textContent = 'Cartella: C:\\Users\\utente\\Desktop\\Elaborate';
         }
