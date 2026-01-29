@@ -1,0 +1,19 @@
+# Vercel ignores everything except the UI folder
+backend/
+app/
+build/
+dist/
+data/
+templates/
+*.py
+*.spec
+*.sh
+*.bat
+Cooksy.nsi
+Cooksy-*.exe
+requirements*.txt
+.env*
+.git*
+*.md
+node_modules/
+.venv/

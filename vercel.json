@@ -1,5 +1,5 @@
 {
-    "buildCommand": "echo 'Building Cooksy PWA'",
+    "buildCommand": "bash vercel-build.sh",
     "outputDirectory": "ui",
     "env": {
         "API_BASE_URL": "@api_base_url"
