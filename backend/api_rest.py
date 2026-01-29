@@ -357,7 +357,11 @@ def api_method(method):
                     import json
                     with open(templates_list_file, 'r', encoding='utf-8') as f:
                         data = json.load(f)
-                        templates = data.get('templates', [])
+                        # Assicurati che templates sia una lista
+                        if isinstance(data, dict):
+                            templates = data.get('templates', [])
+                        elif isinstance(data, list):
+                            templates = data
                 else:
                     # Scan directory
                     for html_file in sorted(templates_dir.glob('*.html')):
@@ -372,10 +376,10 @@ def api_method(method):
             return jsonify({
                 "ok": True,
                 "templates": templates,
-                "count": len(templates)
+                "count": len(templates) if isinstance(templates, list) else 0
             }), 200
         except Exception as e:
-            logger.error(f"get_templates fallback error: {e}")
+            logger.error(f"get_templates fallback error: {e}", exc_info=True)
             return jsonify({"ok": False, "error": str(e)}), 500
     
     # Se Bridge disponibile, delega a lui
