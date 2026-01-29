@@ -3182,18 +3182,62 @@
     // Funzione rimossa: caricamento Termini e Condizioni non più necessario.
 
     let initReady = false;
+
+    function disableDesktopOnlyFeatures() {
+      /**
+       * Su web app (Vercel), disabilita i pulsanti che richiedono PyWebView.
+       * Questi richiedono accesso file system che non è disponibile su web.
+       */
+      if (!isWebApp()) return; // Solo su web app
+
+      // Elementi da disabilitare su web app
+      const desktopElements = [
+        // File operations
+        { id: 'btnPick', name: 'btnPick (File picker non disponibile)' },
+        { id: 'btnPickFolder', name: 'btnPickFolder (Folder selection non disponibile)' },
+        { id: 'btnOutDir', name: 'btnOutDir (Folder selection non disponibile)' },
+        { id: 'btnPrint', name: 'btnPrint (Usa browser print)' },
+        // Batch operations
+        { id: 'btnBatchStart', name: 'btnBatchStart (Batch processing non disponibile)' },
+        { id: 'btnBatchOpenOut', name: 'btnBatchOpenOut (File system access non disponibile)' },
+        // Archive operations
+        { id: 'btnArchiveSave', name: 'btnArchiveSave (Richiede cloud migration)' },
+        { id: 'btnArchiveOpen', name: 'btnArchiveOpen (Richiede cloud migration)' },
+        // Cloud AI settings
+        { id: 'btnAiSettings', name: 'btnAiSettings (Richiede cloud config)' },
+        // Sections
+        { id: 'batchSection', name: 'Sezione Batch' },
+        { id: 'archiveSection', name: 'Sezione Archive' },
+      ];
+
+      let disabled = 0;
+      desktopElements.forEach(item => {
+        const element = el(item.id);
+        if (element) {
+          element.style.display = 'none';
+          disabled++;
+          log(`Web: Hidden desktop-only element: ${item.name}`);
+        }
+      });
+
+      if (disabled > 0) {
+        log(`Web: Disabilitati ${disabled} elementi desktop-only`);
+      }
+    }
+
     async function continueInitialization() {
       if (!initReady) {
         initReady = true;
         loadStoredAuth();
         updateAuthUi();
+        disableDesktopOnlyFeatures(); // Disabilita UI desktop-only su web
         try {
           await loadTemplates();
         } catch (e) {
           log(`Init: loadTemplates fallita: ${e.message || e}`);
         }
         if (selPageSize) selPageSize.value = 'A4';
-        
+
         // Auth check (works for both web and desktop)
         if (apiReady()) {
           try {
@@ -3201,7 +3245,7 @@
           } catch (e) {
             log(`Auth check failed: ${e.message || e}`);
           }
-          
+
           // SOLO per desktop app: carica cartella output default
           if (isDesktopApp() && window.pywebview && window.pywebview.api && window.pywebview.api.get_default_output_dir) {
             try {
@@ -3215,7 +3259,7 @@
             }
           }
         }
-        
+
         if (outDirLabel && !state.outDir) {
           outDirLabel.textContent = 'Cartella: C:\\Users\\utente\\Desktop\\Elaborate';
         }
