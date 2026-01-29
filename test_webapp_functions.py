@@ -217,20 +217,23 @@ def run_all_tests():
     
     # Register new user
     registered, credentials = test_auth_register()
+    results['auth_register'] = registered
     
     if registered and credentials:
         # Try to login
         print(f"\n{YELLOW}[4/5] LOGIN WITH NEW CREDENTIALS{END}\n")
         logged_in, token = test_auth_login(credentials['email'], credentials['password'])
-        results['auth_flow'] = logged_in
+        results['auth_login'] = logged_in
         
         if logged_in and token:
             # Get current user
             print(f"\n{YELLOW}[5/5] AUTHENTICATED ENDPOINTS{END}\n")
             results['auth_me'] = test_auth_me(token)
+    else:
+        results['auth_login'] = False
     
     # Summary
-    print_header("📊 TEST SUMMARY")
+    print_header("TEST SUMMARY")
     
     total = len(results)
     passed = sum(1 for v in results.values() if v)
@@ -258,7 +261,7 @@ def run_all_tests():
     else:
         print(f"{RED}[FAIL] Templates not loading - check database{END}")
     
-    if results.get('auth_flow'):
+    if results.get('auth_login'):
         print(f"{GREEN}[OK] Full authentication flow working{END}")
     else:
         print(f"{RED}[FAIL] Auth issues - check user manager{END}")
@@ -266,7 +269,7 @@ def run_all_tests():
     print(f"\n{BLUE}WEB APP STATUS:{END}\n")
     
     essential_ok = results.get('health') and results.get('cors') and results.get('templates')
-    auth_ok = results.get('auth_flow')
+    auth_ok = results.get('auth_register') and results.get('auth_login')
     
     if essential_ok and auth_ok:
         print(f"{GREEN}WEBAPP IS FULLY FUNCTIONAL - READY FOR PRODUCTION{END}")
