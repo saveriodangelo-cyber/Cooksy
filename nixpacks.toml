@@ -1,0 +1,11 @@
+# Railway Nixpacks Configuration
+# Forza l'uso di pip invece di uv per evitare errori di compatibilità
+
+[phases.setup]
+nixPkgs = ["python311"]
+
+[phases.install]
+cmds = ["pip install -r requirements-api.txt"]
+
+[start]
+cmd = "python -m backend.api_rest"
