@@ -3578,21 +3578,24 @@
     });
 
     // Poll leggero nel caso l'evento non arrivi (alcune versioni non lo emettono).
-    let apiPollTries = 0;
-    const apiPoll = () => {
-      if (apiReady()) {
-        initWhenReady();
-        return;
-      }
-      if (apiPollTries++ < 20) {
-        setTimeout(apiPoll, 250);
-      } else {
-        const pv = el('pillValue');
-        if (pv) pv.textContent = 'API non disponibile';
-        showToast('API non disponibile. Riavvia l\'app o reinstalla WebView2.', 'error', 6000);
-      }
-    };
-    apiPoll();
+    // SOLO per desktop app, non per web app (Vercel/Railway)
+    if (!isWebApp()) {
+      let apiPollTries = 0;
+      const apiPoll = () => {
+        if (apiReady()) {
+          initWhenReady();
+          return;
+        }
+        if (apiPollTries++ < 20) {
+          setTimeout(apiPoll, 250);
+        } else {
+          const pv = el('pillValue');
+          if (pv) pv.textContent = 'API non disponibile';
+          showToast('API non disponibile. Riavvia l\'app o reinstalla WebView2.', 'error', 6000);
+        }
+      };
+      apiPoll();
+    }
 
     // ===== PWA: Register Service Worker =====
     if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
