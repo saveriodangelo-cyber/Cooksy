@@ -1,5 +1,32 @@
 // Configurazione API per production
-const API_BASE_URL = 'https://cooksy-finaly.up.railway.app';
+// Priorizzazione:
+// 1. Se disponibile env variable (iniettata da Vercel)
+// 2. Se stessa origine (Vercel, Railway server)
+// 3. Fallback a Railway per compatibilità legacy
+
+const API_BASE_URL = (() => {
+    // Se disponibile via window config
+    if (typeof window.COOKSY_API_URL !== 'undefined') {
+        return window.COOKSY_API_URL;
+    }
+
+    // Se disponibile via env (Vercel injection)
+    if (typeof process !== 'undefined' && process.env.REACT_APP_API_URL) {
+        return process.env.REACT_APP_API_URL;
+    }
+
+    // Same origin (per deploy monolith su Railway)
+    if (window.location.protocol === 'https:' || window.location.protocol === 'http:') {
+        const origin = window.location.origin;
+        // Se non è localhost/127.0.0.1, prova stessa origine prima di fallback
+        if (!origin.includes('localhost') && !origin.includes('127.0.0.1')) {
+            return origin;
+        }
+    }
+
+    // Fallback a Railway (legacy)
+    return 'https://cooksy-finaly.up.railway.app';
+})();
 
 // Helper per chiamate API
 async function apiCall(endpoint, options = {}) {

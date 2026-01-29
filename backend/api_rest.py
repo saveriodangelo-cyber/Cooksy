@@ -24,6 +24,16 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
+# Import user manager for auth endpoints
+try:
+    from backend.user_manager import UserManager
+    user_manager = UserManager()
+    _user_manager_available = True
+except Exception as e:
+    logger.warning(f"UserManager not available: {e}")
+    user_manager = None
+    _user_manager_available = False
+
 # Config
 app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024  # 500MB max upload
 app.config['JSON_SORT_KEYS'] = False
@@ -49,8 +59,24 @@ def health():
 
 @app.route('/api/templates', methods=['GET'])
 def get_templates():
-    """Lista template disponibili."""
+    """Lista template disponibili - versione REST pura."""
     try:
+        # Prova a leggere templates_list.json
+        templates_list_file = Path(__file__).parent.parent / 'templates' / 'templates_list.json'
+        
+        if templates_list_file.exists():
+            try:
+                with open(templates_list_file, 'r', encoding='utf-8') as f:
+                    templates = json.load(f)
+                return jsonify({
+                    "ok": True,
+                    "templates": templates,
+                    "count": len(templates)
+                }), 200
+            except Exception as e:
+                logger.warning(f"Failed to load templates_list.json: {e}")
+        
+        # Fallback: scannerizza cartella templates
         templates_dir = Path(__file__).parent.parent / 'templates'
         templates = []
         
@@ -71,6 +97,37 @@ def get_templates():
         }), 200
     except Exception as e:
         logger.error(f"Get templates error: {e}")
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route('/api/templates/<template_id>', methods=['GET'])
+def get_template_content(template_id):
+    """Serve il contenuto HTML di un template."""
+    try:
+        # Sanitizza l'ID
+        template_id = str(template_id or '').strip()
+        if not template_id or '/' in template_id or '\\' in template_id:
+            return jsonify({"ok": False, "error": "Invalid template ID"}), 400
+        
+        # Cerca il file template
+        templates_dir = Path(__file__).parent.parent / 'templates'
+        template_file = templates_dir / f"{template_id}.html"
+        
+        # Verifica che il file esista e sia nella cartella templates
+        if not template_file.exists() or not template_file.resolve().is_relative_to(templates_dir.resolve()):
+            return jsonify({"ok": False, "error": "Template not found"}), 404
+        
+        # Leggi e servi il contenuto
+        with open(template_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        return jsonify({
+            "ok": True,
+            "id": template_id,
+            "html": content
+        }), 200
+    except Exception as e:
+        logger.error(f"Get template content error: {e}")
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
@@ -109,6 +166,161 @@ def api_status():
         "disk_free_gb": __get_disk_free_gb(),
         "python_version": f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
     }), 200
+
+
+# ===== AUTHENTICATION ENDPOINTS =====
+
+@app.route('/api/auth_register', methods=['POST'])
+def auth_register():
+    """Registrazione nuovo utente."""
+    if not _user_manager_available or not user_manager:
+        return jsonify({"ok": False, "error": "Auth service not available"}), 503
+    
+    try:
+        data = request.get_json() or {}
+        email = data.get('email', '').strip()
+        password = data.get('password', '').strip()
+        username = data.get('username', '').strip() or None
+        
+        if not email or not password:
+            return jsonify({"ok": False, "error": "Email e password sono obbligatorie"}), 400
+        
+        # Registra utente
+        reg_result = user_manager.register(email, password, username)
+        if not reg_result.get('ok'):
+            return jsonify({
+                "ok": False,
+                "error": reg_result.get('error', 'Registration failed')
+            }), 409
+        
+        user_id = reg_result.get('user_id')
+        
+        # Crea sessione
+        token = user_manager.create_session(user_id, days=30)
+        
+        # Carica info utente
+        user = user_manager.get_user(user_id)
+        
+        return jsonify({
+            "ok": True,
+            "user": {
+                "id": user.id,
+                "email": user.email,
+                "username": user.username,
+                "role": user.role
+            },
+            "token": token
+        }), 201
+    
+    except Exception as e:
+        logger.error(f"Auth register error: {e}")
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route('/api/auth_login', methods=['POST'])
+def auth_login():
+    """Login con email e password."""
+    if not _user_manager_available or not user_manager:
+        return jsonify({"ok": False, "error": "Auth service not available"}), 503
+    
+    try:
+        data = request.get_json() or {}
+        email = data.get('email', '').strip()
+        password = data.get('password', '').strip()
+        
+        if not email or not password:
+            return jsonify({"ok": False, "error": "Email e password sono obbligatorie"}), 400
+        
+        # Autentica
+        auth_result = user_manager.authenticate(email, password)
+        if not auth_result.get('ok'):
+            return jsonify({
+                "ok": False,
+                "error": auth_result.get('error', 'Authentication failed')
+            }), 401
+        
+        user_id = auth_result.get('user_id')
+        token = auth_result.get('token')
+        
+        # Carica info utente
+        user = user_manager.get_user(user_id)
+        
+        return jsonify({
+            "ok": True,
+            "user": {
+                "id": user.id,
+                "email": user.email,
+                "username": user.username,
+                "role": user.role
+            },
+            "token": token
+        }), 200
+    
+    except Exception as e:
+        logger.error(f"Auth login error: {e}")
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route('/api/auth_logout', methods=['POST'])
+def auth_logout():
+    """Logout - invalida la sessione."""
+    if not _user_manager_available or not user_manager:
+        return jsonify({"ok": False, "error": "Auth service not available"}), 503
+    
+    try:
+        data = request.get_json() or {}
+        token = data.get('token', '').strip()
+        
+        if token:
+            # Invalida sessione
+            user_manager.logout(token)
+        
+        return jsonify({"ok": True}), 200
+    
+    except Exception as e:
+        logger.error(f"Auth logout error: {e}")
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route('/api/auth_me', methods=['GET'])
+def auth_me():
+    """Ottieni info utente corrente dal token."""
+    if not _user_manager_available or not user_manager:
+        return jsonify({"ok": False, "error": "Auth service not available"}), 503
+    
+    try:
+        # Leggi token da Authorization header
+        auth_header = request.headers.get('Authorization', '')
+        token = auth_header.replace('Bearer ', '').strip() if auth_header else ''
+        
+        if not token:
+            return jsonify({"ok": False, "error": "Token non fornito"}), 401
+        
+        # Valida sessione
+        session_result = user_manager.validate_session(token)
+        if not session_result.get('ok'):
+            return jsonify({"ok": False, "error": session_result.get('error', 'Invalid token')}), 401
+        
+        user_id = session_result.get('user_id')
+        
+        # Carica user
+        user = user_manager.get_user(user_id)
+        if not user:
+            return jsonify({"ok": False, "error": "Utente non trovato"}), 404
+        
+        return jsonify({
+            "ok": True,
+            "user": {
+                "id": user.id,
+                "email": user.email,
+                "username": user.username,
+                "role": user.role
+            }
+        }), 200
+    
+    except Exception as e:
+        logger.error(f"Auth me error: {e}")
+        return jsonify({"ok": False, "error": str(e)}), 500
 
 
 # Generic API endpoint for method calls like api('get_templates')

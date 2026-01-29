@@ -909,7 +909,16 @@
     }
 
     // Use REST API (web app or fallback)
-    const apiBase = (window.CooksyAPI && window.CooksyAPI.baseURL) || 'https://cooksy-finaly.up.railway.app';
+    const apiBase = (window.CooksyAPI && window.CooksyAPI.baseURL) || (() => {
+      // Fallback: prova stessa origine, poi Railway
+      if (window.location.protocol === 'https:' || window.location.protocol === 'http:') {
+        const origin = window.location.origin;
+        if (!origin.includes('localhost') && !origin.includes('127.0.0.1')) {
+          return origin;
+        }
+      }
+      return 'https://cooksy-finaly.up.railway.app';
+    })();
     const endpoint = `/api/${name}`;
     const response = await fetch(`${apiBase}${endpoint}`, {
       method: 'POST',
