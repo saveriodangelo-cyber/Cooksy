@@ -234,7 +234,10 @@ def auth_register():
 @app.route('/api/auth_login', methods=['POST'])
 def auth_login():
     """Login con email e password."""
+    logger.info(f"Login attempt - UserManager available: {_user_manager_available}")
+    
     if not _user_manager_available or not user_manager:
+        logger.error("UserManager not available for login")
         return jsonify({"ok": False, "error": "Auth service not available"}), 503
     
     try:
@@ -242,11 +245,14 @@ def auth_login():
         email = data.get('email', '').strip()
         password = data.get('password', '').strip()
         
+        logger.info(f"Login request for: {email}")
+        
         if not email or not password:
             return jsonify({"ok": False, "error": "Email e password sono obbligatorie"}), 400
         
         # Autentica
         auth_result = user_manager.authenticate(email, password)
+        logger.info(f"Auth result for {email}: {auth_result.get('ok')}")
         if not auth_result.get('ok'):
             return jsonify({
                 "ok": False,
@@ -258,6 +264,12 @@ def auth_login():
         
         # Carica info utente
         user = user_manager.get_user(user_id)
+        
+        if not user:
+            logger.error(f"User not found after authentication: {user_id}")
+            return jsonify({"ok": False, "error": "User not found"}), 500
+        
+        logger.info(f"Login successful for: {email}")
         
         return jsonify({
             "ok": True,
@@ -271,7 +283,7 @@ def auth_login():
         }), 200
     
     except Exception as e:
-        logger.error(f"Auth login error: {e}")
+        logger.error(f"Auth login error: {e}", exc_info=True)
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
